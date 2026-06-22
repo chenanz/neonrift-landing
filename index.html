@@ -21,15 +21,16 @@ body{background:var(--bg);color:#fff;font-family:system-ui;overflow-x:hidden;cur
 .orb-3{width:400px;height:400px;background:var(--ng);top:50%;left:60%;animation:orbFloat3 15s ease-in-out infinite}
 @keyframes orbFloat1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(80px,60px) scale(1.15)}}
 @keyframes orbFloat2{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-60px,-80px) scale(1.2)}}
-@keyframes orbFloat3{0%,100%{transform:translate(0,0)}50%{transform:translate(-100px,50px)}}
+@keyframes orb194;transform:translate(-100px,50px)}}
 
 /* Nav account dropdown */
 .nav-account{position:relative}
 .nav-account-btn{display:flex;align-items:center;gap:6px}
 .nav-account-btn::after{content:'▾';font-size:.7rem;transition:transform .2s}
 .nav-account:hover .nav-account-btn::after{transform:rotate(180deg)}
-.nav-account-dropdown{display:none;position:absolute;top:calc(100% + 8px);right:0;background:rgba(10,0,16,.95);border:1px solid rgba(0,240,255,.2);border-radius:10px;padding:8px;min-width:140px;white-space:nowrap;backdrop-filter:blur(12px);box-shadow:0 12px 40px rgba(0,0,0,.5)}
-.nav-account:hover .nav-account-dropdown{display:block}
+.nav-account-dropdown{display:none;position:absolute;top:calc(100% + 8px);right:0;background:rgba(10,0,16,.98);border:1px solid rgba(0,240,255,.2);border-radius:10px;padding:8px;min-width:140px;white-space:nowrap;backdrop-filter:blur(12px);box-shadow:0 12px 40px rgba(0,0,0,.5);z-index:1001}
+.nav-account-dropdown:before{content:'';position:absolute;top:-20px;left:0;right:0;height:20px}
+.nav-account:hover>.nav-account-dropdown,.nav-account-dropdown:hover{display:block}
 .nav-account-dropdown button{width:100%;padding:10px 14px;background:none;border:none;color:rgba(255,255,255,.7);font-size:.8rem;letter-spacing:2px;text-align:left;cursor:pointer;border-radius:6px;transition:all .2s}
 .nav-account-dropdown button:hover{background:rgba(255,0,110,.15);color:var(--hp)}
 .nav-account-dropdown .divider{height:1px;background:rgba(255,255,255,.08);margin:4px 0}
@@ -135,9 +136,9 @@ footer{position:relative;z-index:1;border-top:1px solid rgba(255,255,255,.06);pa
 
 .cursor-ring{position:fixed;width:36px;height:36px;border:1px solid var(--eb);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .2s,height .2s,border-color .2s,mix-blend-mode .2s}
 .cursor-dot{position:fixed;width:5px;height:5px;background:var(--eb);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%)}
-.scanlines{position:fixed;inset:0;pointer-events:none;z-index:9998;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.03) 2px,rgba(0,0,0,.03) 4px)}
 
-.login-gate{position:fixed;inset:0;background:linear-gradient(135deg,#0a0010 0%,#1a0033 50%,#0a0010 100%);z-index:99900;display:flex;align-items:center;justify-content:center;transition:opacity .6s,visibility .6s}
+.scanlines{position:fixed;inset:0;pointer-events:none;z-index:9998;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.03) 2px,rgba(0,0,0,.03) 4px)}
+  .login-gate{position:fixed;inset:0;background:linear-gradient(135deg,#0a0010 0%,#1a0033 50%,#0a0010 100%);z-index:99900;display:flex;align-items:center;justify-content:center;transition:opacity .6s,visibility .6s}
 .login-gate.hidden{opacity:0;visibility:hidden;pointer-events:none}
 .login-gate::before{content:'';position:absolute;inset:0;background:url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><text y="80" font-size="80" fill="rgba(0,240,255,0.03)">🎮</text></svg>');background-size:200px;opacity:.5}
 .login-gate-particles{position:absolute;inset:0;overflow:hidden;pointer-events:none}
@@ -309,7 +310,6 @@ footer{position:relative;z-index:1;border-top:1px solid rgba(255,255,255,.06);pa
   </div>
 </section>
 
-<!-- Login Gate — FULL PAGE BLOCKER -->
 <div class="login-gate" id="loginGate">
   <div class="login-gate-particles"><canvas id="gateCanvas"></canvas></div>
   <div class="login-modal-gate">
@@ -356,7 +356,7 @@ footer{position:relative;z-index:1;border-top:1px solid rgba(255,255,255,.06);pa
   const COLS=['#00f0ff','#ff006e','#39ff14'];
   function resize(){W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight;}
   resize(); window.addEventListener('resize',resize);
-  for(let i=0;i<90;i++){ps.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4,r:Math.random()*2+1,c:COLS[Math.floor(Math.random()*3)]});}
+  for(let i=0;i<90;i++){ps.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4,r:Math.random()*2+1.5,c:COLS[Math.floor(Math.random()*3)]});}
   function draw(){
     ctx.clearRect(0,0,W,H);
     ps.forEach(p=>{p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>W)p.vx*=-1; if(p.y<0||p.y>H)p.vy*=-1; ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle=p.c;ctx.globalAlpha=.7;ctx.fill();});
@@ -390,7 +390,6 @@ document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;gsap.to(dot,
 (function moveRing(){ringX+=(mx-ringX)*.12;ringY+=(my-ringY)*.12;ring.style.left=ringX+'px';ring.style.top=ringY+'px';requestAnimationFrame(moveRing);})();
 document.querySelectorAll('a,button,.game-card,.char-card').forEach(el=>{el.addEventListener('mouseenter',()=>{ring.style.width='50px';ring.style.height='50px';ring.style.borderColor='var(--hp)';ring.style.mixBlendMode='difference';});el.addEventListener('mouseleave',()=>{ring.style.width='36px';ring.style.height='36px';ring.style.borderColor='var(--eb)';ring.style.mixBlendMode='normal';});});
 
-// ===== LOGIN GATE =====
 const OVERRIDE_PWD = '14722l';
 let currentTab = 'qq';
 let pendingCode = null;
