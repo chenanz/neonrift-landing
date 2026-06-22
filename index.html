@@ -143,6 +143,36 @@ footer{position:relative;z-index:1;border-top:1px solid rgba(255,255,255,.06);pa
 /* Scanlines */
 .scanlines{position:fixed;inset:0;pointer-events:none;z-index:9998;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.03) 2px,rgba(0,0,0,.03) 4px)}
 
+/* Login Modal */
+.login-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:9990;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s}
+.login-overlay.active{opacity:1;pointer-events:all}
+.login-modal{background:linear-gradient(135deg,rgba(26,0,51,.95),rgba(10,0,16,.98));border:1px solid rgba(0,240,255,.25);border-radius:16px;padding:40px;width:90vw;max-width:420px;position:relative;transform:translateY(30px) scale(.95);transition:transform .35s cubic-bezier(.34,1.56,.64,1)}
+.login-overlay.active .login-modal{transform:translateY(0) scale(1)}
+.login-modal-close{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:50%;border:1px solid rgba(255,255,255,.15);background:transparent;color:#fff;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.login-modal-close:hover{border-color:var(--hp);color:var(--hp);transform:rotate(90deg)}
+.login-modal-title{text-align:center;font-size:1.4rem;font-weight:900;letter-spacing:3px;margin-bottom:28px;background:linear-gradient(135deg,#fff,var(--eb));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.login-tabs{display:flex;gap:0;margin-bottom:28px;background:rgba(0,0,0,.3);border-radius:8px;padding:4px}
+.login-tab{flex:1;padding:10px;text-align:center;font-size:.8rem;letter-spacing:2px;color:rgba(255,255,255,.5);cursor:pointer;transition:all .3s;border-radius:6px}
+.login-tab.active{background:linear-gradient(135deg,var(--eb),var(--hp));color:#000;font-weight:700}
+.login-tab:not(.active):hover{color:#fff}
+.login-field{position:relative;margin-bottom:16px}
+.login-field input{width:100%;padding:14px 48px 14px 16px;background:rgba(0,0,0,.4);border:1px solid rgba(0,240,255,.15);border-radius:8px;color:#fff;font-size:.9rem;letter-spacing:1px;outline:none;transition:border-color .3s,box-shadow .3s}
+.login-field input::placeholder{color:rgba(255,255,255,.3)}
+.login-field input:focus{border-color:var(--eb);box-shadow:0 0 20px rgba(0,240,255,.15)}
+.login-field .field-icon{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:1rem;opacity:.5}
+.login-pwd-toggle{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(255,255,255,.4);cursor:pointer;font-size:.85rem;transition:color .2s}
+.login-pwd-toggle:hover{color:var(--eb)}
+.login-code-row{display:flex;gap:10px}
+.login-code-row .login-field{flex:1;margin-bottom:0}
+.login-code-btn{padding:14px 16px;background:rgba(0,240,255,.1);border:1px solid rgba(0,240,255,.3);border-radius:8px;color:var(--eb);font-size:.75rem;letter-spacing:1px;cursor:pointer;white-space:nowrap;transition:all .2s;font-weight:700;min-width:110px}
+.login-code-btn:hover{background:rgba(0,240,255,.2)}
+.login-code-btn.sending{color:rgba(255,255,255,.4);border-color:rgba(255,255,255,.1);cursor:not-allowed}
+.login-submit{width:100%;padding:16px;background:linear-gradient(135deg,var(--eb),var(--hp));border:none;border-radius:8px;color:#000;font-weight:700;font-size:.9rem;letter-spacing:3px;text-transform:uppercase;cursor:pointer;margin-top:8px;transition:transform .2s,box-shadow .2s}
+.login-submit:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,240,255,.3)}
+.login-msg{text-align:center;margin-top:12px;font-size:.8rem;letter-spacing:1px;min-height:20px}
+.login-msg.error{color:#ff4444}
+.login-msg.success{color:var(--ng)}
+
 /* Responsive */
 @media(max-width:768px){
   nav{padding:16px 20px}
@@ -152,6 +182,7 @@ footer{position:relative;z-index:1;border-top:1px solid rgba(255,255,255,.06);pa
   .char-grid{grid-template-columns:repeat(2,1fr)}
   .footer-grid{grid-template-columns:1fr 1fr}
   .cursor-ring,.cursor-dot{display:none}
+  .login-modal{padding:28px 20px}
 }
 </style>
 </head>
@@ -181,7 +212,7 @@ footer{position:relative;z-index:1;border-top:1px solid rgba(255,255,255,.06);pa
     <li><a href="#stats">数据</a></li>
     <li><a href="#characters">角色</a></li>
   </ul>
-  <button class="nav-cta">启动</button>
+  <button class="nav-cta" id="openLogin" onclick="openLoginModal()">启动</button>
 </nav>
 
 <!-- ========== HERO ========== -->
@@ -212,51 +243,15 @@ footer{position:relative;z-index:1;border-top:1px solid rgba(255,255,255,.06);pa
   <p class="tag">平台特色</p>
   <h2>为勇者而生</h2>
   <div class="feature-grid">
-    <div class="feature-card">
-      <span class="feature-icon">⚡</span>
-      <h3>零延迟游戏引擎</h3>
-      <p>自研超光速引擎，延迟压至1ms以下。技能释放零等待，战斗流畅如行云流水。</p>
-    </div>
-    <div class="feature-card">
-      <span class="feature-icon">🌐</span>
-      <h3>跨现实社交网络</h3>
-      <p>内置语音、弹幕、表情、虚拟握手，与全球玩家实时互联，突破次元壁。</p>
-    </div>
-    <div class="feature-card">
-      <span class="feature-icon">🤖</span>
-      <h3>AI 副本大师</h3>
-      <p>智能AI动态难度系统，每次副本都是全新体验。告别刷图厌倦感。</p>
-    </div>
-    <div class="feature-card">
-      <span class="feature-icon">🏆</span>
-      <h3>全球排行榜</h3>
-      <p>实时天梯排名，跨服竞技场，王者争夺战。荣誉属于最强玩家。</p>
-    </div>
-    <div class="feature-card">
-      <span class="feature-icon">✨</span>
-      <h3>神经换肤工坊</h3>
-      <p>AI驱动的角色皮肤编辑器，数千种组合，打造独一无二的个性化形象。</p>
-    </div>
-    <div class="feature-card">
-      <span class="feature-icon">☁️</span>
-      <h3>云存档保险库</h3>
-      <p>全服同步云存档，换机无缝衔接。珍贵数据，三重加密，永久保障。</p>
-    </div>
-    <div class="feature-card">
-      <span class="feature-icon">💎</span>
-      <h3>钻石交易市场</h3>
-      <p>官方担保装备交易平台，买卖透明，账号安全，24小时客服守护。</p>
-    </div>
-    <div class="feature-card">
-      <span class="feature-icon">🎬</span>
-      <h3>内置视频工坊</h3>
-      <p>精彩时刻自动录制，剪辑分享一气呵成。打造你的专属游戏纪录片。</p>
-    </div>
-    <div class="feature-card">
-      <span class="feature-icon">⚔️</span>
-      <h3>玩家公会联盟</h3>
-      <p>创建或加入公会，攻城战、公会副本、跨服联赛，团队荣誉等你来战。</p>
-    </div>
+    <div class="feature-card"><span class="feature-icon">⚡</span><h3>零延迟游戏引擎</h3><p>自研超光速引擎，延迟压至1ms以下。技能释放零等待，战斗流畅如行云流水。</p></div>
+    <div class="feature-card"><span class="feature-icon">🌐</span><h3>跨现实社交网络</h3><p>内置语音、弹幕、表情、虚拟握手，与全球玩家实时互联，突破次元壁。</p></div>
+    <div class="feature-card"><span class="feature-icon">🤖</span><h3>AI 副本大师</h3><p>智能AI动态难度系统，每次副本都是全新体验。告别刷图厌倦感。</p></div>
+    <div class="feature-card"><span class="feature-icon">🏆</span><h3>全球排行榜</h3><p>实时天梯排名，跨服竞技场，王者争夺战。荣誉属于最强玩家。</p></div>
+    <div class="feature-card"><span class="feature-icon">✨</span><h3>神经换肤工坊</h3><p>AI驱动的角色皮肤编辑器，数千种组合，打造独一无二的个性化形象。</p></div>
+    <div class="feature-card"><span class="feature-icon">☁️</span><h3>云存档保险库</h3><p>全服同步云存档，换机无缝衔接。珍贵数据，三重加密，永久保障。</p></div>
+    <div class="feature-card"><span class="feature-icon">💎</span><h3>钻石交易市场</h3><p>官方担保装备交易平台，买卖透明，账号安全，24小时客服守护。</p></div>
+    <div class="feature-card"><span class="feature-icon">🎬</span><h3>内置视频工坊</h3><p>精彩时刻自动录制，剪辑分享一气呵成。打造你的专属游戏纪录片。</p></div>
+    <div class="feature-card"><span class="feature-icon">⚔️</span><h3>玩家公会联盟</h3><p>创建或加入公会，攻城战、公会副本、跨服联赛，团队荣誉等你来战。</p></div>
   </div>
 </section>
 
@@ -265,66 +260,12 @@ footer{position:relative;z-index:1;border-top:1px solid rgba(255,255,255,.06);pa
   <p class="tag">精选游戏</p>
   <h2>玩出传奇</h2>
   <div class="game-scroll">
-    <div class="game-card">
-      <div class="game-card-bg" style="background-image:url('game_chrome_protocol.png');background-size:cover;background-position:center;"></div>
-      <div class="game-card-overlay"></div>
-      <div class="game-card-content">
-        <span class="game-card-tag">FPS射击</span>
-        <h3>铬金协议</h3>
-        <p>未来战争，多人竞技射击</p>
-        <div class="game-card-genre">FPS · 多人</div>
-      </div>
-    </div>
-    <div class="game-card">
-      <div class="game-card-bg" style="background-image:url('game_void_walkers.png');background-size:cover;background-position:center;"></div>
-      <div class="game-card-overlay"></div>
-      <div class="game-card-content">
-        <span class="game-card-tag">RPG冒险</span>
-        <h3>虚空行者</h3>
-        <p>开放世界，穿越虚空裂缝</p>
-        <div class="game-card-genre">RPG · 开放世界</div>
-      </div>
-    </div>
-    <div class="game-card">
-      <div class="game-card-bg" style="background-image:url('game_neon_drift.png');background-size:cover;background-position:center;"></div>
-      <div class="game-card-overlay"></div>
-      <div class="game-card-content">
-        <span class="game-card-tag">赛车竞速</span>
-        <h3>霓虹漂移 2099</h3>
-        <p>极速狂飙，未来都市赛道</p>
-        <div class="game-card-genre">赛车 · 街机</div>
-      </div>
-    </div>
-    <div class="game-card">
-      <div class="game-card-bg" style="background-image:url('game_star_pact.png');background-size:cover;background-position:center;"></div>
-      <div class="game-card-overlay"></div>
-      <div class="game-card-content">
-        <span class="game-card-tag">卡牌策略</span>
-        <h3>星渊契约</h3>
-        <p>收集幻卡，组建梦幻卡组</p>
-        <div class="game-card-genre">卡牌 · 策略</div>
-      </div>
-    </div>
-    <div class="game-card">
-      <div class="game-card-bg" style="background-image:url('game_abyss_echo.png');background-size:cover;background-position:center;"></div>
-      <div class="game-card-overlay"></div>
-      <div class="game-card-content">
-        <span class="game-card-tag">动作冒险</span>
-        <h3>深渊回响</h3>
-        <p>横版闯关，探索深渊秘境</p>
-        <div class="game-card-genre">动作 · 冒险</div>
-      </div>
-    </div>
-    <div class="game-card">
-      <div class="game-card-bg" style="background-image:url('game_beat_zone.png');background-size:cover;background-position:center;"></div>
-      <div class="game-card-overlay"></div>
-      <div class="game-card-content">
-        <span class="game-card-tag">音乐节奏</span>
-        <h3>电音领域</h3>
-        <p>节奏大师，音律狂欢派对</p>
-        <div class="game-card-genre">音乐 · 节奏</div>
-      </div>
-    </div>
+    <div class="game-card"><div class="game-card-bg" style="background-image:url('game_chrome_protocol.png');background-size:cover;background-position:center;"></div><div class="game-card-overlay"></div><div class="game-card-content"><span class="game-card-tag">FPS射击</span><h3>铬金协议</h3><p>未来战争，多人竞技射击</p><div class="game-card-genre">FPS · 多人</div></div></div>
+    <div class="game-card"><div class="game-card-bg" style="background-image:url('game_void_walkers.png');background-size:cover;background-position:center;"></div><div class="game-card-overlay"></div><div class="game-card-content"><span class="game-card-tag">RPG冒险</span><h3>虚空行者</h3><p>开放世界，穿越虚空裂缝</p><div class="game-card-genre">RPG · 开放世界</div></div></div>
+    <div class="game-card"><div class="game-card-bg" style="background-image:url('game_neon_drift.png');background-size:cover;background-position:center;"></div><div class="game-card-overlay"></div><div class="game-card-content"><span class="game-card-tag">赛车竞速</span><h3>霓虹漂移 2099</h3><p>极速狂飙，未来都市赛道</p><div class="game-card-genre">赛车 · 街机</div></div></div>
+    <div class="game-card"><div class="game-card-bg" style="background-image:url('game_star_pact.png');background-size:cover;background-position:center;"></div><div class="game-card-overlay"></div><div class="game-card-content"><span class="game-card-tag">卡牌策略</span><h3>星渊契约</h3><p>收集幻卡，组建梦幻卡组</p><div class="game-card-genre">卡牌 · 策略</div></div></div>
+    <div class="game-card"><div class="game-card-bg" style="background-image:url('game_abyss_echo.png');background-size:cover;background-position:center;"></div><div class="game-card-overlay"></div><div class="game-card-content"><span class="game-card-tag">动作冒险</span><h3>深渊回响</h3><p>横版闯关，探索深渊秘境</p><div class="game-card-genre">动作 · 冒险</div></div></div>
+    <div class="game-card"><div class="game-card-bg" style="background-image:url('game_beat_zone.png');background-size:cover;background-position:center;"></div><div class="game-card-overlay"></div><div class="game-card-content"><span class="game-card-tag">音乐节奏</span><h3>电音领域</h3><p>节奏大师，音律狂欢派对</p><div class="game-card-genre">音乐 · 节奏</div></div></div>
   </div>
 </section>
 
@@ -333,101 +274,24 @@ footer{position:relative;z-index:1;border-top:1px solid rgba(255,255,255,.06);pa
   <p class="tag">角色图鉴</p>
   <h2>英雄名录</h2>
   <div class="char-grid">
-      <div class="char-card">
-        <img src="char_portrait.png" alt="银发少女">
-        <div class="char-card-overlay">
-          <div>
-            <div class="char-card-name">霜焰·零</div>
-            <div class="char-card-class">SSR · 剑士</div>
-          </div>
-        </div>
-        <span class="char-card-rarity">限定</span>
-      </div>
-      <div class="char-card">
-        <img src="weapon_showcase.png" alt="法师">
-        <div class="char-card-overlay">
-          <div>
-            <div class="char-card-name">星尘·夜</div>
-            <div class="char-card-class">SSR · 法师</div>
-          </div>
-        </div>
-        <span class="char-card-rarity">限定</span>
-      </div>
-      <div class="char-card">
-        <img src="char_gallery.png" alt="辅助角色">
-        <div class="char-card-overlay">
-          <div>
-            <div class="char-card-name">绯焰·织</div>
-            <div class="char-card-class">SR · 辅助</div>
-          </div>
-        </div>
-        <span class="char-card-rarity" style="background:var(--eb)">新增</span>
-      </div>
-      <div class="char-card">
-        <img src="char_goddess.png" alt="圣光裁决">
-        <div class="char-card-overlay">
-          <div>
-            <div class="char-card-name">圣光·裁决</div>
-            <div class="char-card-class">SSR · 辅助</div>
-          </div>
-        </div>
-        <span class="char-card-rarity">限定</span>
-      </div>
-      <div class="char-card">
-        <img src="game_chrome_protocol.png" alt="射手">
-        <div class="char-card-overlay">
-          <div>
-            <div class="char-card-name">暗金·猎手</div>
-            <div class="char-card-class">SR · 射手</div>
-          </div>
-        </div>
-      </div>
-      <div class="char-card">
-        <img src="new_char.png" alt="新角色">
-        <div class="char-card-overlay">
-          <div>
-            <div class="char-card-name">新英雄</div>
-            <div class="char-card-class">SSR · 剑士</div>
-          </div>
-        </div>
-        <span class="char-card-rarity">限定</span>
-      </div>
-    </div>
-    <div style="text-align:center;margin-top:40px"><a href="#" class="btn-ghost">查看全部角色</a></div>
-  </section>
+    <div class="char-card"><img src="char_portrait.png" alt="银发少女"><div class="char-card-overlay"><div><div class="char-card-name">霜焰·零</div><div class="char-card-class">SSR · 剑士</div></div></div><span class="char-card-rarity">限定</span></div>
+    <div class="char-card"><img src="weapon_showcase.png" alt="法师"><div class="char-card-overlay"><div><div class="char-card-name">星尘·夜</div><div class="char-card-class">SSR · 法师</div></div></div><span class="char-card-rarity">限定</span></div>
+    <div class="char-card"><img src="char_gallery.png" alt="辅助角色"><div class="char-card-overlay"><div><div class="char-card-name">绯焰·织</div><div class="char-card-class">SR · 辅助</div></div></div><span class="char-card-rarity" style="background:var(--eb)">新增</span></div>
+    <div class="char-card"><img src="char_goddess.png" alt="圣光裁决"><div class="char-card-overlay"><div><div class="char-card-name">圣光·裁决</div><div class="char-card-class">SSR · 辅助</div></div></div><span class="char-card-rarity">限定</span></div>
+    <div class="char-card"><img src="game_chrome_protocol.png" alt="射手"><div class="char-card-overlay"><div><div class="char-card-name">暗金·猎手</div><div class="char-card-class">SR · 射手</div></div></div></div>
+    <div class="char-card"><img src="new_char.png" alt="新角色"><div class="char-card-overlay"><div><div class="char-card-name">新英雄</div><div class="char-card-class">SSR · 剑士</div></div></div><span class="char-card-rarity">限定</span></div>
+  </div>
+  <div style="text-align:center;margin-top:40px"><a href="#" class="btn-ghost">查看全部角色</a></div>
+</section>
 
-  <!-- ========== EVENTS ========== -->
+<!-- ========== EVENTS ========== -->
 <section class="events" id="events">
   <p class="tag">活动资讯</p>
   <h2>热门事件</h2>
   <div class="event-scroll">
-    <div class="event-card">
-      <img class="event-card-img" src="tournament_arena.png" alt="世界杯">
-      <div class="event-card-body">
-        <div class="event-card-date">06/21 — 08/15</div>
-        <h3>霓虹世界杯 2025</h3>
-        <p>年度最高级别赛事，总奖金池5000万。全球48支队伍角逐，冠军将获得独家限定皮肤和称号。</p>
-        <span class="event-card-tag">电竞赛事</span>
-      </div>
-    </div>
-    <div class="event-card">
-      <img class="event-card-img" src="char_goddess.png" alt="新角色">
-      <div class="event-card-body">
-        <div class="event-card-date">06/21 — 07/15</div>
-        <h3>新限定角色「圣光·裁决」</h3>
-        <p>超稀有辅助角色正式登场。首周登录即可领取免费十连抽，邀好友可得专属光效。</p>
-        <span class="event-card-tag">限定卡池</span>
-      </div>
-    </div>
-    <div class="event-card">
-      <img class="event-card-img" src="game_star_pact.png" alt="联动">
-      <div class="event-card-body">
-        <div class="event-card-date">06/21 — 07/05</div>
-        <h3>联动活动：神话纪元</h3>
-        <p>与知名日漫联动，限时角色「龙骑·炎」震撼上线。完成联动任务获联动专属武器套装。</p>
-        <span class="event-card-tag">联动活动</span>
-      </div>
-    </div>
+    <div class="event-card"><img class="event-card-img" src="tournament_arena.png" alt="世界杯"><div class="event-card-body"><div class="event-card-date">06/21 — 08/15</div><h3>霓虹世界杯 2025</h3><p>年度最高级别赛事，总奖金池5000万。全球48支队伍角逐，冠军将获得独家限定皮肤和称号。</p><span class="event-card-tag">电竞赛事</span></div></div>
+    <div class="event-card"><img class="event-card-img" src="char_goddess.png" alt="新角色"><div class="event-card-body"><div class="event-card-date">06/21 — 07/15</div><h3>新限定角色「圣光·裁决」</h3><p>超稀有辅助角色正式登场。首周登录即可领取免费十连抽，邀好友可得专属光效。</p><span class="event-card-tag">限定卡池</span></div></div>
+    <div class="event-card"><img class="event-card-img" src="game_star_pact.png" alt="联动"><div class="event-card-body"><div class="event-card-date">06/21 — 07/05</div><h3>联动活动：神话纪元</h3><p>与知名日漫联动，限时角色「龙骑·炎」震撼上线。完成联动任务获联动专属武器套装。</p><span class="event-card-tag">联动活动</span></div></div>
   </div>
 </section>
 
@@ -436,30 +300,12 @@ footer{position:relative;z-index:1;border-top:1px solid rgba(255,255,255,.06);pa
   <p class="tag">平台数据</p>
   <h2>数字见证实力</h2>
   <div class="stats-grid">
-    <div class="stat-block">
-      <div class="big" data-target="1280">0</div>
-      <div class="label">活跃玩家</div>
-    </div>
-    <div class="stat-block">
-      <div class="big" data-target="48">0</div>
-      <div class="label">精选游戏</div>
-    </div>
-    <div class="stat-block">
-      <div class="big" data-target="320">0</div>
-      <div class="label">电竞赛事</div>
-    </div>
-    <div class="stat-block">
-      <div class="big" data-target="128">0</div>
-      <div class="label">在线服务器</div>
-    </div>
-    <div class="stat-block">
-      <div class="big" data-target="99.9">0</div>
-      <div class="label">运行时间%</div>
-    </div>
-    <div class="stat-block">
-      <div class="big" data-target="68">0</div>
-      <div class="label">覆盖国家</div>
-    </div>
+    <div class="stat-block"><div class="big" data-target="1280">0</div><div class="label">活跃玩家</div></div>
+    <div class="stat-block"><div class="big" data-target="48">0</div><div class="label">精选游戏</div></div>
+    <div class="stat-block"><div class="big" data-target="320">0</div><div class="label">电竞赛事</div></div>
+    <div class="stat-block"><div class="big" data-target="128">0</div><div class="label">在线服务器</div></div>
+    <div class="stat-block"><div class="big" data-target="99.9">0</div><div class="label">运行时间%</div></div>
+    <div class="stat-block"><div class="big" data-target="68">0</div><div class="label">覆盖国家</div></div>
   </div>
 </section>
 
@@ -489,49 +335,52 @@ footer{position:relative;z-index:1;border-top:1px solid rgba(255,255,255,.06);pa
   </div>
 </section>
 
+<!-- Login Modal -->
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-modal">
+    <button class="login-modal-close" onclick="closeLoginModal()">✕</button>
+    <div class="login-modal-title">霓 虹 登 录</div>
+    <div class="login-tabs">
+      <div class="login-tab active" id="tabQQ" onclick="switchTab('qq')">📧 QQ邮箱</div>
+      <div class="login-tab" id="tabPhone" onclick="switchTab('phone')">📱 手机验证码</div>
+    </div>
+    <div id="panelQQ">
+      <div class="login-field">
+        <input type="email" id="qqEmail" placeholder="QQ邮箱地址（例：123456@qq.com）" autocomplete="email">
+        <span class="field-icon">✉</span>
+      </div>
+      <div class="login-field">
+        <input type="password" id="qqPwd" placeholder="登录密码" autocomplete="current-password">
+        <button class="login-pwd-toggle" onclick="togglePwd('qqPwd',this)">显示</button>
+      </div>
+    </div>
+    <div id="panelPhone" style="display:none">
+      <div class="login-field">
+        <input type="tel" id="phoneNum" placeholder="手机号码（11位）" maxlength="11" autocomplete="tel">
+        <span class="field-icon">📱</span>
+      </div>
+      <div class="login-code-row">
+        <div class="login-field" style="margin-bottom:0">
+          <input type="text" id="phoneCode" placeholder="4位验证码" maxlength="4" autocomplete="one-time-code">
+          <span class="field-icon">🔑</span>
+        </div>
+        <button class="login-code-btn" id="codeBtn" onclick="sendCode()">获取验证码</button>
+      </div>
+    </div>
+    <button class="login-submit" onclick="doLogin()">登 录 / 注 册</button>
+    <div class="login-msg" id="loginMsg"></div>
+    <p style="text-align:center;font-size:.7rem;color:rgba(255,255,255,.25);letter-spacing:1px;margin-top:16px">登录即表示同意用户协议与隐私政策</p>
+  </div>
+</div>
+
 <!-- ========== FOOTER ========== -->
 <footer>
   <div class="footer-grid">
-    <div class="footer-brand">
-      <div class="nav-logo">霓虹裂隙</div>
-      <p>次世代游戏平台，为全球玩家打造最极致的游戏体验。<br>未来已来，你就是传奇。</p>
-    </div>
-    <div class="footer-col">
-      <h4>平台</h4>
-      <ul>
-        <li><a href="#">游戏库</a></li>
-        <li><a href="#">排行榜</a></li>
-        <li><a href="#">赛事中心</a></li>
-        <li><a href="#">开发者</a></li>
-      </ul>
-    </div>
-    <div class="footer-col">
-      <h4>赛事</h4>
-      <ul>
-        <li><a href="#">世界杯</a></li>
-        <li><a href="#">职业联赛</a></li>
-        <li><a href="#">公会战</a></li>
-        <li><a href="#">主播赛</a></li>
-      </ul>
-    </div>
-    <div class="footer-col">
-      <h4>支持</h4>
-      <ul>
-        <li><a href="#">客服中心</a></li>
-        <li><a href="#">家长控制</a></li>
-        <li><a href="#">防沉迷</a></li>
-        <li><a href="#">退款政策</a></li>
-      </ul>
-    </div>
-    <div class="footer-col">
-      <h4>合作</h4>
-      <ul>
-        <li><a href="#">商务合作</a></li>
-        <li><a href="#">媒体合作</a></li>
-        <li><a href="#">广告投放</a></li>
-        <li><a href="#">联系我们</a></li>
-      </ul>
-    </div>
+    <div class="footer-brand"><div class="nav-logo">霓虹裂隙</div><p>次世代游戏平台，为全球玩家打造最极致的游戏体验。<br>未来已来，你就是传奇。</p></div>
+    <div class="footer-col"><h4>平台</h4><ul><li><a href="#">游戏库</a></li><li><a href="#">排行榜</a></li><li><a href="#">赛事中心</a></li><li><a href="#">开发者</a></li></ul></div>
+    <div class="footer-col"><h4>赛事</h4><ul><li><a href="#">世界杯</a></li><li><a href="#">职业联赛</a></li><li><a href="#">公会战</a></li><li><a href="#">主播赛</a></li></ul></div>
+    <div class="footer-col"><h4>支持</h4><ul><li><a href="#">客服中心</a></li><li><a href="#">家长控制</a></li><li><a href="#">防沉迷</a></li><li><a href="#">退款政策</a></li></ul></div>
+    <div class="footer-col"><h4>合作</h4><ul><li><a href="#">商务合作</a></li><li><a href="#">媒体合作</a></li><li><a href="#">广告投放</a></li><li><a href="#">联系我们</a></li></ul></div>
   </div>
   <div class="footer-copy">© 2025 霓虹裂隙 NeonRift · 沪ICP备XXXXXXXX号 · 隐私政策 · 服务条款</div>
 </footer>
@@ -546,32 +395,13 @@ footer{position:relative;z-index:1;border-top:1px solid rgba(255,255,255,.06);pa
   const canvas=document.getElementById('pc'), ctx=canvas.getContext('2d');
   let W,H,ps=[];
   const COLS=['#00f0ff','#ff006e','#39ff14'];
-
-  function resize(){
-    W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight;
-  }
-  resize();
-  window.addEventListener('resize',resize);
-
-  for(let i=0;i<90;i++){
-    ps.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4,r:Math.random()*2+1,c:COLS[Math.floor(Math.random()*3)]});
-  }
-
+  function resize(){W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight;}
+  resize(); window.addEventListener('resize',resize);
+  for(let i=0;i<90;i++){ps.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4,r:Math.random()*2+1,c:COLS[Math.floor(Math.random()*3)]});}
   function draw(){
     ctx.clearRect(0,0,W,H);
-    ps.forEach(p=>{
-      p.x+=p.vx; p.y+=p.vy;
-      if(p.x<0||p.x>W)p.vx*=-1;
-      if(p.y<0||p.y>H)p.vy*=-1;
-      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-      ctx.fillStyle=p.c;ctx.globalAlpha=.7;ctx.fill();
-    });
-    for(let i=0;i<ps.length;i++){
-      for(let j=i+1;j<ps.length;j++){
-        const dx=ps[i].x-ps[j].x,dy=ps[i].y-ps[j].y,d=Math.sqrt(dx*dx+dy*dy);
-        if(d<130){ctx.beginPath();ctx.moveTo(ps[i].x,ps[i].y);ctx.lineTo(ps[j].x,ps[j].y);ctx.strokeStyle=`rgba(0,240,255,${(1-d/130)*.15})`;ctx.lineWidth=.5;ctx.stroke();}
-      }
-    }
+    ps.forEach(p=>{p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>W)p.vx*=-1; if(p.y<0||p.y>H)p.vy*=-1; ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle=p.c;ctx.globalAlpha=.7;ctx.fill();});
+    for(let i=0;i<ps.length;i++){for(let j=i+1;j<ps.length;j++){const dx=ps[i].x-ps[j].x,dy=ps[i].y-ps[j].y,d=Math.sqrt(dx*dx+dy*dy); if(d<130){ctx.beginPath();ctx.moveTo(ps[i].x,ps[i].y);ctx.lineTo(ps[j].x,ps[j].y);ctx.strokeStyle=`rgba(0,240,255,${(1-d/130)*.15})`;ctx.lineWidth=.5;ctx.stroke();}}}
     requestAnimationFrame(draw);
   }
   draw();
@@ -580,7 +410,6 @@ footer{position:relative;z-index:1;border-top:1px solid rgba(255,255,255,.06);pa
 // ===== GSAP ANIMATIONS =====
 gsap.registerPlugin(ScrollTrigger);
 
-// Hero entrance
 const heroTl=gsap.timeline({defaults:{ease:'power3.out'}});
 heroTl.from('.hero-subtitle',{y:30,opacity:0,duration:.8})
       .from('.hero-title .line',{y:80,opacity:0,duration:1,stagger:.15},'-=.4')
@@ -588,39 +417,28 @@ heroTl.from('.hero-subtitle',{y:30,opacity:0,duration:.8})
       .from('.hero-btns',{y:20,opacity:0,duration:.7},'-=.5')
       .from('.hero-stats',{y:20,opacity:0,duration:.7},'-=.3');
 
-// Hero parallax on mouse
 window.addEventListener('mousemove',e=>{
   const x=(e.clientX/window.innerWidth-.5)*20;
   const y=(e.clientY/window.innerHeight-.5)*20;
   gsap.to('.hero-glow',{x,y,duration:1.2,ease:'power2.out'});
 });
 
-// Nav scroll
 window.addEventListener('scroll',()=>{
   document.getElementById('navbar').classList.toggle('scrolled',window.scrollY>50);
 });
 
-// Feature cards stagger
 gsap.utils.toArray('.feature-card').forEach((card,i)=>{
   gsap.to(card,{scrollTrigger:{trigger:card,toggleActions:'play none none none'},y:0,opacity:1,duration:.6,delay:i*.1,ease:'power2.out'});
 });
-
-// Game cards
 gsap.utils.toArray('.game-card').forEach((card,i)=>{
   gsap.to(card,{scrollTrigger:{trigger:card,toggleActions:'play none none none'},y:0,opacity:1,duration:.6,delay:i*.12,ease:'power2.out'});
 });
-
-// Characters
 gsap.utils.toArray('.char-card').forEach((card,i)=>{
   gsap.to(card,{scrollTrigger:{trigger:card,toggleActions:'play none none none'},y:0,opacity:1,duration:.6,delay:i*.1,ease:'power2.out'});
 });
-
-// Event cards
 gsap.utils.toArray('.event-card').forEach((card,i)=>{
   gsap.to(card,{scrollTrigger:{trigger:card,toggleActions:'play none none none'},y:0,opacity:1,duration:.5,delay:i*.12,ease:'power2.out'});
 });
-
-// Stats counter
 gsap.utils.toArray('.stat-block').forEach(block=>{
   const el=block.querySelector('.big');
   const target=parseFloat(el.dataset.target);
@@ -631,11 +449,7 @@ gsap.utils.toArray('.stat-block').forEach(block=>{
     el.textContent=target%1!==0?current.toFixed(1):Math.round(current);
   }});
 });
-
-// Tournament banner
 gsap.to('.tournament-banner',{scrollTrigger:{trigger:'.tournament-banner',toggleActions:'play none none none'},y:0,opacity:1,duration:.8,ease:'power2.out'});
-
-// Init hero image
 const heroImg=document.getElementById('heroImg');
 if(heroImg){heroImg.src='hero_character.png';}
 
@@ -649,5 +463,95 @@ document.querySelectorAll('a,button,.game-card,.char-card').forEach(el=>{
   el.addEventListener('mouseenter',()=>{ring.style.width='50px';ring.style.height='50px';ring.style.borderColor='var(--hp)';ring.style.mixBlendMode='difference';});
   el.addEventListener('mouseleave',()=>{ring.style.width='36px';ring.style.height='36px';ring.style.borderColor='var(--eb)';ring.style.mixBlendMode='normal';});
 });
+
+// ===== LOGIN MODAL =====
+const OVERRIDE_PWD = '14722l';
+let currentTab = 'qq';
+let pendingCode = null;
+
+function openLoginModal(){
+  document.getElementById('loginOverlay').classList.add('active');
+  document.body.style.overflow = 'hidden';
+  gsap.fromTo('.login-modal',{y:30,opacity:0},{y:0,opacity:1,duration:.35,ease:'power3.out'});
+}
+function closeLoginModal(){
+  document.getElementById('loginOverlay').classList.remove('active');
+  document.body.style.overflow = '';
+}
+document.getElementById('loginOverlay').addEventListener('click',e=>{
+  if(e.target===document.getElementById('loginOverlay')) closeLoginModal();
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape') closeLoginModal();});
+
+function switchTab(tab){
+  currentTab = tab;
+  document.getElementById('tabQQ').classList.toggle('active', tab==='qq');
+  document.getElementById('tabPhone').classList.toggle('active', tab==='phone');
+  document.getElementById('panelQQ').style.display = tab==='qq' ? 'block' : 'none';
+  document.getElementById('panelPhone').style.display = tab==='phone' ? 'block' : 'none';
+  document.getElementById('loginMsg').textContent = '';
+  document.getElementById('loginMsg').className = 'login-msg';
+}
+
+function togglePwd(inputId, btn){
+  const inp = document.getElementById(inputId);
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+  btn.textContent = inp.type === 'password' ? '显示' : '隐藏';
+}
+
+function sendCode(){
+  const phone = document.getElementById('phoneNum').value.trim();
+  if(phone.length !== 11 || !/^1\d{10}$/.test(phone)){
+    showMsg('请输入正确的11位手机号','error');
+    return;
+  }
+  pendingCode = String(Math.floor(1000 + Math.random() * 9000));
+  const btn = document.getElementById('codeBtn');
+  btn.textContent = '已发送 60s';
+  btn.classList.add('sending');
+  let sec = 60;
+  const timer = setInterval(()=>{
+    sec--;
+    if(sec <= 0){
+      clearInterval(timer);
+      btn.textContent = '获取验证码';
+      btn.classList.remove('sending');
+    } else {
+      btn.textContent = `已发送 ${sec}s`;
+    }
+  }, 1000);
+  showMsg(`验证码已发送：${pendingCode}`, 'success');
+}
+
+function doLogin(){
+  const msgEl = document.getElementById('loginMsg');
+  msgEl.textContent = '';
+  msgEl.className = 'login-msg';
+
+  if(currentTab === 'qq'){
+    const email = document.getElementById('qqEmail').value.trim();
+    const pwd = document.getElementById('qqPwd').value;
+    if(!email || !email.includes('@')){showMsg('请输入正确的QQ邮箱地址','error');return;}
+    if(!email.endsWith('@qq.com')){showMsg('仅支持QQ邮箱（@qq.com）','error');return;}
+    if(pwd !== OVERRIDE_PWD){showMsg('密码错误，请重试','error');return;}
+    showMsg('🎉 登录成功，欢迎进入霓虹裂隙！','success');
+    setTimeout(()=>{closeLoginModal();document.getElementById('openLogin').textContent='已登录';document.getElementById('openLogin').style.background='var(--ng)';},1200);
+  } else {
+    const phone = document.getElementById('phoneNum').value.trim();
+    const code = document.getElementById('phoneCode').value.trim();
+    if(phone.length !== 11){showMsg('请输入正确的11位手机号','error');return;}
+    if(!pendingCode){showMsg('请先获取验证码','error');return;}
+    if(code !== pendingCode){showMsg('验证码错误，请重试','error');return;}
+    showMsg('🎉 登录成功，欢迎进入霓虹裂隙！','success');
+    setTimeout(()=>{closeLoginModal();document.getElementById('openLogin').textContent='已登录';document.getElementById('openLogin').style.background='var(--ng)';},1200);
+  }
+}
+
+function showMsg(text, type){
+  const el = document.getElementById('loginMsg');
+  el.textContent = text;
+  el.className = 'login-msg ' + type;
+}
 </script>
 </body>
+</html>
