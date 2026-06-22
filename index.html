@@ -23,6 +23,17 @@ body{background:var(--bg);color:#fff;font-family:system-ui;overflow-x:hidden;cur
 @keyframes orbFloat2{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-60px,-80px) scale(1.2)}}
 @keyframes orbFloat3{0%,100%{transform:translate(0,0)}50%{transform:translate(-100px,50px)}}
 
+/* Nav account dropdown */
+.nav-account{position:relative}
+.nav-account-btn{display:flex;align-items:center;gap:6px}
+.nav-account-btn::after{content:'▾';font-size:.7rem;transition:transform .2s}
+.nav-account:hover .nav-account-btn::after{transform:rotate(180deg)}
+.nav-account-dropdown{display:none;position:absolute;top:calc(100% + 8px);right:0;background:rgba(10,0,16,.95);border:1px solid rgba(0,240,255,.2);border-radius:10px;padding:8px;min-width:140px;white-space:nowrap;backdrop-filter:blur(12px);box-shadow:0 12px 40px rgba(0,0,0,.5)}
+.nav-account:hover .nav-account-dropdown{display:block}
+.nav-account-dropdown button{width:100%;padding:10px 14px;background:none;border:none;color:rgba(255,255,255,.7);font-size:.8rem;letter-spacing:2px;text-align:left;cursor:pointer;border-radius:6px;transition:all .2s}
+.nav-account-dropdown button:hover{background:rgba(255,0,110,.15);color:var(--hp)}
+.nav-account-dropdown .divider{height:1px;background:rgba(255,255,255,.08);margin:4px 0}
+
 nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:20px 48px;display:flex;align-items:center;justify-content:space-between;transition:background .4s,border-color .4s,backdrop-filter .4s}
 nav.scrolled{background:rgba(10,0,16,.8);border-bottom:1px solid rgba(0,240,255,.15);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
 .nav-logo{font-size:1.5rem;font-weight:900;letter-spacing:6px;background:linear-gradient(135deg,var(--eb),var(--hp));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
@@ -124,7 +135,6 @@ footer{position:relative;z-index:1;border-top:1px solid rgba(255,255,255,.06);pa
 
 .cursor-ring{position:fixed;width:36px;height:36px;border:1px solid var(--eb);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .2s,height .2s,border-color .2s,mix-blend-mode .2s}
 .cursor-dot{position:fixed;width:5px;height:5px;background:var(--eb);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%)}
-
 .scanlines{position:fixed;inset:0;pointer-events:none;z-index:9998;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.03) 2px,rgba(0,0,0,.03) 4px)}
 
 .login-gate{position:fixed;inset:0;background:linear-gradient(135deg,#0a0010 0%,#1a0033 50%,#0a0010 100%);z-index:99900;display:flex;align-items:center;justify-content:center;transition:opacity .6s,visibility .6s}
@@ -188,18 +198,21 @@ footer{position:relative;z-index:1;border-top:1px solid rgba(255,255,255,.06);pa
     <li><a href="#stats">数据</a></li>
     <li><a href="#characters">角色</a></li>
   </ul>
-  <button class="nav-cta" id="openLogin" onclick="openLoginModal()">启动</button>
+  <div class="nav-account" id="navAccount">
+    <button class="nav-cta nav-account-btn" id="openLogin">启动</button>
+    <div class="nav-account-dropdown" id="accountDropdown">
+      <button>👤 已登录</button>
+      <div class="divider"></div>
+      <button onclick="logout()">🚪 退出登录</button>
+    </div>
+  </div>
 </nav>
 
-<!-- ========== HERO ========== -->
 <section class="hero" id="hero">
   <img class="hero-char-img" id="heroImg" alt="游戏角色">
   <div class="hero-glow"></div>
   <p class="hero-subtitle" id="heroSub">次世代游戏平台</p>
-  <h1 class="hero-title" id="heroTitle">
-    <span class="line">霓</span>
-    <span class="line2">虹</span>
-  </h1>
+  <h1 class="hero-title" id="heroTitle"><span class="line">霓</span><span class="line2">虹</span></h1>
   <p class="hero-desc" id="heroDesc">踏入赛博朋克宇宙，释放你的传奇。<br>数百万玩家正在等你加入。</p>
   <div class="hero-btns" id="heroBtns">
     <a href="#games" class="btn-primary">免费开始游戏</a>
@@ -214,7 +227,6 @@ footer{position:relative;z-index:1;border-top:1px solid rgba(255,255,255,.06);pa
   <div class="scroll-hint">向下滚动</div>
 </section>
 
-<!-- ========== FEATURES ========== -->
 <section class="features" id="features">
   <p class="tag">平台特色</p>
   <h2>为勇者而生</h2>
@@ -231,7 +243,6 @@ footer{position:relative;z-index:1;border-top:1px solid rgba(255,255,255,.06);pa
   </div>
 </section>
 
-<!-- ========== GAMES ========== -->
 <section class="games" id="games">
   <p class="tag">精选游戏</p>
   <h2>玩出传奇</h2>
@@ -245,7 +256,6 @@ footer{position:relative;z-index:1;border-top:1px solid rgba(255,255,255,.06);pa
   </div>
 </section>
 
-<!-- ========== CHARACTERS ========== -->
 <section class="characters" id="characters">
   <p class="tag">角色图鉴</p>
   <h2>英雄名录</h2>
@@ -260,7 +270,6 @@ footer{position:relative;z-index:1;border-top:1px solid rgba(255,255,255,.06);pa
   <div style="text-align:center;margin-top:40px"><a href="#" class="btn-ghost">查看全部角色</a></div>
 </section>
 
-<!-- ========== EVENTS ========== -->
 <section class="events" id="events">
   <p class="tag">活动资讯</p>
   <h2>热门事件</h2>
@@ -271,7 +280,6 @@ footer{position:relative;z-index:1;border-top:1px solid rgba(255,255,255,.06);pa
   </div>
 </section>
 
-<!-- ========== STATS ========== -->
 <section class="stats-section" id="stats">
   <p class="tag">平台数据</p>
   <h2>数字见证实力</h2>
@@ -285,22 +293,12 @@ footer{position:relative;z-index:1;border-top:1px solid rgba(255,255,255,.06);pa
   </div>
 </section>
 
-<!-- ========== TOURNAMENT ========== -->
 <section id="tournament">
   <p class="tag">电竞赛事</p>
   <h2>荣耀之战</h2>
-  <div class="tournament-banner">
-    <img src="tournament_arena.png" alt="电竞馆">
-    <div class="tournament-banner-overlay">
-      <h3>霓虹世界杯 2025</h3>
-      <div class="prize">¥50,000,000</div>
-      <p style="color:rgba(255,255,255,.6);margin:12px 0">全球48支战队 · 决赛即将开战</p>
-      <a href="#" class="btn-primary">立即观赛</a>
-    </div>
-  </div>
+  <div class="tournament-banner"><img src="tournament_arena.png" alt="电竞馆"><div class="tournament-banner-overlay"><h3>霓虹世界杯 2025</h3><div class="prize">¥50,000,000</div><p style="color:rgba(255,255,255,.6);margin:12px 0">全球48支战队 · 决赛即将开战</p><a href="#" class="btn-primary">立即观赛</a></div></div>
 </section>
 
-<!-- ========== CTA ========== -->
 <section class="cta-section" id="cta">
   <p class="tag">立即加入</p>
   <h2>准备好进入<br>裂隙了吗？</h2>
@@ -322,25 +320,13 @@ footer{position:relative;z-index:1;border-top:1px solid rgba(255,255,255,.06);pa
       <div class="login-tab" id="tabPhone" onclick="switchTab('phone')">📱 手机验证码</div>
     </div>
     <div id="panelQQ">
-      <div class="login-field">
-        <input type="email" id="qqEmail" placeholder="QQ邮箱地址（例：123456@qq.com）" autocomplete="email">
-        <span class="field-icon">✉</span>
-      </div>
-      <div class="login-field">
-        <input type="password" id="qqPwd" placeholder="登录密码" autocomplete="current-password">
-        <button class="login-pwd-toggle" onclick="togglePwd('qqPwd',this)">显示</button>
-      </div>
+      <div class="login-field"><input type="email" id="qqEmail" placeholder="QQ邮箱地址（例：123456@qq.com）" autocomplete="email"><span class="field-icon">✉</span></div>
+      <div class="login-field"><input type="password" id="qqPwd" placeholder="登录密码" autocomplete="current-password"><button class="login-pwd-toggle" onclick="togglePwd('qqPwd',this)">显示</button></div>
     </div>
     <div id="panelPhone" style="display:none">
-      <div class="login-field">
-        <input type="tel" id="phoneNum" placeholder="手机号码（11位）" maxlength="11" autocomplete="tel">
-        <span class="field-icon">📱</span>
-      </div>
+      <div class="login-field"><input type="tel" id="phoneNum" placeholder="手机号码（11位）" maxlength="11" autocomplete="tel"><span class="field-icon">📱</span></div>
       <div class="login-code-row">
-        <div class="login-field">
-          <input type="text" id="phoneCode" placeholder="4位验证码" maxlength="4" autocomplete="one-time-code">
-          <span class="field-icon">🔑</span>
-        </div>
+        <div class="login-field"><input type="text" id="phoneCode" placeholder="4位验证码" maxlength="4" autocomplete="one-time-code"><span class="field-icon">🔑</span></div>
         <button class="login-code-btn" id="codeBtn" onclick="sendCode()">获取验证码</button>
       </div>
     </div>
@@ -350,7 +336,6 @@ footer{position:relative;z-index:1;border-top:1px solid rgba(255,255,255,.06);pa
   </div>
 </div>
 
-<!-- ========== FOOTER ========== -->
 <footer>
   <div class="footer-grid">
     <div class="footer-brand"><div class="nav-logo">霓虹裂隙</div><p>次世代游戏平台，为全球玩家打造最极致的游戏体验。<br>未来已来，你就是传奇。</p></div>
@@ -384,44 +369,16 @@ footer{position:relative;z-index:1;border-top:1px solid rgba(255,255,255,.06);pa
 gsap.registerPlugin(ScrollTrigger);
 
 const heroTl=gsap.timeline({defaults:{ease:'power3.out'}});
-heroTl.from('.hero-subtitle',{y:30,opacity:0,duration:.8})
-      .from('.hero-title .line',{y:80,opacity:0,duration:1,stagger:.15},'-=.4')
-      .from('.hero-desc',{y:20,opacity:0,duration:.7},'-=.5')
-      .from('.hero-btns',{y:20,opacity:0,duration:.7},'-=.5')
-      .from('.hero-stats',{y:20,opacity:0,duration:.7},'-=.3');
+heroTl.from('.hero-subtitle',{y:30,opacity:0,duration:.8}).from('.hero-title .line',{y:80,opacity:0,duration:1,stagger:.15},'-=.4').from('.hero-desc',{y:20,opacity:0,duration:.7},'-=.5').from('.hero-btns',{y:20,opacity:0,duration:.7},'-=.5').from('.hero-stats',{y:20,opacity:0,duration:.7},'-=.3');
 
-window.addEventListener('mousemove',e=>{
-  const x=(e.clientX/window.innerWidth-.5)*20;
-  const y=(e.clientY/window.innerHeight-.5)*20;
-  gsap.to('.hero-glow',{x,y,duration:1.2,ease:'power2.out'});
-});
+window.addEventListener('mousemove',e=>{const x=(e.clientX/window.innerWidth-.5)*20;const y=(e.clientY/window.innerHeight-.5)*20;gsap.to('.hero-glow',{x,y,duration:1.2,ease:'power2.out'});});
+window.addEventListener('scroll',()=>{document.getElementById('navbar').classList.toggle('scrolled',window.scrollY>50);});
 
-window.addEventListener('scroll',()=>{
-  document.getElementById('navbar').classList.toggle('scrolled',window.scrollY>50);
-});
-
-gsap.utils.toArray('.feature-card').forEach((card,i)=>{
-  gsap.to(card,{scrollTrigger:{trigger:card,toggleActions:'play none none none'},y:0,opacity:1,duration:.6,delay:i*.1,ease:'power2.out'});
-});
-gsap.utils.toArray('.game-card').forEach((card,i)=>{
-  gsap.to(card,{scrollTrigger:{trigger:card,toggleActions:'play none none none'},y:0,opacity:1,duration:.6,delay:i*.12,ease:'power2.out'});
-});
-gsap.utils.toArray('.char-card').forEach((card,i)=>{
-  gsap.to(card,{scrollTrigger:{trigger:card,toggleActions:'play none none none'},y:0,opacity:1,duration:.6,delay:i*.1,ease:'power2.out'});
-});
-gsap.utils.toArray('.event-card').forEach((card,i)=>{
-  gsap.to(card,{scrollTrigger:{trigger:card,toggleActions:'play none none none'},y:0,opacity:1,duration:.5,delay:i*.12,ease:'power2.out'});
-});
-gsap.utils.toArray('.stat-block').forEach(block=>{
-  const el=block.querySelector('.big');
-  const target=parseFloat(el.dataset.target);
-  gsap.to(block,{scrollTrigger:{trigger:block,toggleActions:'play none none none'},opacity:1,duration:.5});
-  gsap.to(el,{scrollTrigger:{trigger:block,toggleActions:'play none none none'},duration:2,ease:'power1.out',onUpdate:function(){
-    const progress=this.progress();
-    const current=target*progress;
-    el.textContent=target%1!==0?current.toFixed(1):Math.round(current);
-  }});
-});
+gsap.utils.toArray('.feature-card').forEach((card,i)=>{gsap.to(card,{scrollTrigger:{trigger:card,toggleActions:'play none none none'},y:0,opacity:1,duration:.6,delay:i*.1,ease:'power2.out'});});
+gsap.utils.toArray('.game-card').forEach((card,i)=>{gsap.to(card,{scrollTrigger:{trigger:card,toggleActions:'play none none none'},y:0,opacity:1,duration:.6,delay:i*.12,ease:'power2.out'});});
+gsap.utils.toArray('.char-card').forEach((card,i)=>{gsap.to(card,{scrollTrigger:{trigger:card,toggleActions:'play none none none'},y:0,opacity:1,duration:.6,delay:i*.1,ease:'power2.out'});});
+gsap.utils.toArray('.event-card').forEach((card,i)=>{gsap.to(card,{scrollTrigger:{trigger:card,toggleActions:'play none none none'},y:0,opacity:1,duration:.5,delay:i*.12,ease:'power2.out'});});
+gsap.utils.toArray('.stat-block').forEach(block=>{const el=block.querySelector('.big');const target=parseFloat(el.dataset.target);gsap.to(block,{scrollTrigger:{trigger:block,toggleActions:'play none none none'},opacity:1,duration:.5});gsap.to(el,{scrollTrigger:{trigger:block,toggleActions:'play none none none'},duration:2,ease:'power1.out',onUpdate:function(){const progress=this.progress();const current=target*progress;el.textContent=target%1!==0?current.toFixed(1):Math.round(current);}});});
 gsap.to('.tournament-banner',{scrollTrigger:{trigger:'.tournament-banner',toggleActions:'play none none none'},y:0,opacity:1,duration:.8,ease:'power2.out'});
 const heroImg=document.getElementById('heroImg');
 if(heroImg){heroImg.src='hero_character.png';}
@@ -431,10 +388,7 @@ const dot=document.querySelector('.cursor-dot');
 let ringX=0,ringY=0,mx=0,my=0;
 document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;gsap.to(dot,{x:mx, y:my,duration:.1});});
 (function moveRing(){ringX+=(mx-ringX)*.12;ringY+=(my-ringY)*.12;ring.style.left=ringX+'px';ring.style.top=ringY+'px';requestAnimationFrame(moveRing);})();
-document.querySelectorAll('a,button,.game-card,.char-card').forEach(el=>{
-  el.addEventListener('mouseenter',()=>{ring.style.width='50px';ring.style.height='50px';ring.style.borderColor='var(--hp)';ring.style.mixBlendMode='difference';});
-  el.addEventListener('mouseleave',()=>{ring.style.width='36px';ring.style.height='36px';ring.style.borderColor='var(--eb)';ring.style.mixBlendMode='normal';});
-});
+document.querySelectorAll('a,button,.game-card,.char-card').forEach(el=>{el.addEventListener('mouseenter',()=>{ring.style.width='50px';ring.style.height='50px';ring.style.borderColor='var(--hp)';ring.style.mixBlendMode='difference';});el.addEventListener('mouseleave',()=>{ring.style.width='36px';ring.style.height='36px';ring.style.borderColor='var(--eb)';ring.style.mixBlendMode='normal';});});
 
 // ===== LOGIN GATE =====
 const OVERRIDE_PWD = '14722l';
@@ -449,9 +403,7 @@ let pendingCode = null;
   const COLS = ['#00f0ff','#ff006e','#39ff14'];
   function resize(){W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight;}
   resize(); window.addEventListener('resize', resize);
-  for(let i = 0; i < 60; i++){
-    ps.push({x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - .5) * .5, vy: (Math.random() - .5) * .5, r: Math.random() * 2.5 + 1, c: COLS[Math.floor(Math.random() * 3)]});
-  }
+  for(let i = 0; i < 60; i++){ps.push({x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - .5) * .5, vy: (Math.random() - .5) * .5, r: Math.random() * 2.5 + 1, c: COLS[Math.floor(Math.random() * 3)]});}
   function draw(){
     ctx.clearRect(0, 0, W, H);
     ps.forEach(p => { p.x += p.vx; p.y += p.vy; if(p.x < 0 || p.x > W) p.vx *= -1; if(p.y < 0 || p.y > H) p.vy *= -1; ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fillStyle = p.c; ctx.globalAlpha = .8; ctx.fill(); });
@@ -466,7 +418,7 @@ function enterSite(){
   gate.classList.add('hidden');
   document.body.style.overflow = '';
   const btn = document.getElementById('openLogin');
-  if(btn){ btn.textContent = '已登录'; btn.style.background = 'var(--ng)'; }
+  if(btn){ btn.textContent = '已登录'; btn.style.background = 'var(--ng)'; btn.classList.add('nav-account-btn'); }
 }
 
 function switchTab(tab){
@@ -492,10 +444,7 @@ function sendCode(){
   const btn = document.getElementById('codeBtn');
   btn.textContent = '已发送 60s'; btn.classList.add('sending');
   let sec = 60;
-  const timer = setInterval(() => {
-    sec--; if(sec <= 0){ clearInterval(timer); btn.textContent = '获取验证码'; btn.classList.remove('sending'); }
-    else { btn.textContent = `已发送 ${sec}s`; }
-  }, 1000);
+  const timer = setInterval(() => { sec--; if(sec <= 0){ clearInterval(timer); btn.textContent = '获取验证码'; btn.classList.remove('sending'); } else { btn.textContent = `已发送 ${sec}s`; } }, 1000);
   showMsg(`验证码已发送：${pendingCode}`, 'success');
 }
 
@@ -524,6 +473,21 @@ function doLogin(){
 function showMsg(text, type){
   const el = document.getElementById('loginMsg');
   el.textContent = text; el.className = 'login-msg ' + type;
+}
+
+function logout(){
+  const gate = document.getElementById('loginGate');
+  gate.classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+  const btn = document.getElementById('openLogin');
+  if(btn){ btn.textContent = '启动'; btn.style.background = ''; btn.classList.remove('nav-account-btn'); }
+  document.getElementById('qqEmail').value = '';
+  document.getElementById('qqPwd').value = '';
+  document.getElementById('phoneNum').value = '';
+  document.getElementById('phoneCode').value = '';
+  document.getElementById('loginMsg').textContent = '';
+  pendingCode = null;
+  switchTab('qq');
 }
 </script>
 </body>
