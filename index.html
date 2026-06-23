@@ -8,7 +8,7 @@
 :root{--eb:#00f0ff;--hp:#ff006e;--ng:#39ff14;--dp:#1a0033;--bg:#0a0010}
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth;scroll-snap-type:y mandatory}
-body{background:var(--bg);color:#fff;font-family:system-ui;overflow-x:hidden;cursor:none}
+body{background:var(--bg);color:#fff;font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;overflow-x:hidden}
 ::-webkit-scrollbar{width:4px}
 ::-webkit-scrollbar-thumb{background:linear-gradient(var(--eb),var(--hp));border-radius:2px}
 
@@ -21,19 +21,7 @@ body{background:var(--bg);color:#fff;font-family:system-ui;overflow-x:hidden;cur
 .orb-3{width:400px;height:400px;background:var(--ng);top:50%;left:60%;animation:orbFloat3 15s ease-in-out infinite}
 @keyframes orbFloat1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(80px,60px) scale(1.15)}}
 @keyframes orbFloat2{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-60px,-80px) scale(1.2)}}
-@keyframes orb194;transform:translate(-100px,50px)}}
-
-/* Nav account dropdown */
-.nav-account{position:relative}
-.nav-account-btn{display:flex;align-items:center;gap:6px}
-.nav-account-btn::after{content:'▾';font-size:.7rem;transition:transform .2s}
-.nav-account:hover .nav-account-btn::after{transform:rotate(180deg)}
-.nav-account-dropdown{display:none;position:absolute;top:calc(100% + 8px);right:0;background:rgba(10,0,16,.98);border:1px solid rgba(0,240,255,.2);border-radius:10px;padding:8px;min-width:140px;white-space:nowrap;backdrop-filter:blur(12px);box-shadow:0 12px 40px rgba(0,0,0,.5);z-index:1001}
-.nav-account-dropdown:before{content:'';position:absolute;top:-20px;left:0;right:0;height:20px}
-.nav-account:hover>.nav-account-dropdown,.nav-account-dropdown:hover{display:block}
-.nav-account-dropdown button{width:100%;padding:10px 14px;background:none;border:none;color:rgba(255,255,255,.7);font-size:.8rem;letter-spacing:2px;text-align:left;cursor:pointer;border-radius:6px;transition:all .2s}
-.nav-account-dropdown button:hover{background:rgba(255,0,110,.15);color:var(--hp)}
-.nav-account-dropdown .divider{height:1px;background:rgba(255,255,255,.08);margin:4px 0}
+@keyframes orbFloat3{0%,100%{transform:translate(0,0)}50%{transform:translate(-100px,50px)}}
 
 nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:20px 48px;display:flex;align-items:center;justify-content:space-between;transition:background .4s,border-color .4s,backdrop-filter .4s}
 nav.scrolled{background:rgba(10,0,16,.8);border-bottom:1px solid rgba(0,240,255,.15);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
@@ -41,7 +29,17 @@ nav.scrolled{background:rgba(10,0,16,.8);border-bottom:1px solid rgba(0,240,255,
 .nav-links{display:flex;gap:32px;list-style:none}
 .nav-links a{color:rgba(255,255,255,.75);text-decoration:none;font-size:.85rem;letter-spacing:2px;text-transform:uppercase;transition:color .3s}
 .nav-links a:hover{color:var(--eb)}
-.nav-cta{padding:10px 28px;background:linear-gradient(135deg,var(--eb),var(--hp));border:none;border-radius:4px;color:#000;font-weight:700;font-size:.8rem;letter-spacing:2px;cursor:pointer;text-transform:uppercase;transition:transform .2s,box-shadow .2s}
+.nav-account{position:relative}
+.nav-account-btn{display:flex;align-items:center;gap:4px}
+.nav-account-btn::after{content:'▾';font-size:.65rem;transition:transform .2s}
+.nav-account:hover .nav-account-btn::after{transform:rotate(180deg)}
+.nav-account-dropdown{display:none;position:absolute;top:calc(100% + 8px);right:0;background:rgba(10,0,16,.98);border:1px solid rgba(0,240,255,.2);border-radius:10px;padding:8px;min-width:140px;white-space:nowrap;backdrop-filter:blur(12px);box-shadow:0 12px 40px rgba(0,0,0,.5);z-index:1001}
+.nav-account-dropdown:before{content:'';position:absolute;top:-20px;left:0;right:0;height:20px}
+.nav-account:hover>.nav-account-dropdown,.nav-account-dropdown:hover{display:block}
+.nav-account-dropdown button{width:100%;padding:10px 14px;background:none;border:none;color:rgba(255,255,255,.7);font-size:.8rem;letter-spacing:2px;text-align:left;cursor:pointer;border-radius:6px;transition:all .2s}
+.nav-account-dropdown button:hover{background:rgba(255,0,110,.15);color:var(--hp)}
+.nav-account-dropdown .divider{height:1px;background:rgba(255,255,255,.08);margin:4px 0}
+.nav-cta{padding:10px 24px;background:linear-gradient(135deg,var(--eb),var(--hp));border:none;border-radius:4px;color:#000;font-weight:700;font-size:.75rem;letter-spacing:2px;cursor:pointer;text-transform:uppercase;transition:transform .2s,box-shadow .2s}
 .nav-cta:hover{transform:translateY(-2px);box-shadow:0 0 30px rgba(0,240,255,.4)}
 
 section{position:relative;min-height:100vh;scroll-snap-align:start;display:flex;flex-direction:column;justify-content:center;padding:120px 8vw;overflow:hidden;z-index:1}
@@ -51,21 +49,21 @@ section .tag{font-size:.75rem;letter-spacing:5px;color:var(--hp);text-transform:
 .hero{justify-content:center;align-items:center;text-align:center;padding-top:80px}
 .hero-glow{position:absolute;width:800px;height:800px;background:radial-gradient(circle,rgba(0,240,255,.12) 0%,transparent 70%);pointer-events:none}
 .hero-char-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.35;z-index:-1}
-.hero-subtitle{font-size:clamp(.75rem,2vw,1rem);letter-spacing:8px;color:var(--eb);text-transform:uppercase;margin-bottom:20px;opacity:0}
-.hero-title{font-size:clamp(3rem,12vw,10rem);font-weight:900;letter-spacing:-2px;line-height:.9;opacity:0}
+.hero-subtitle{font-size:clamp(.75rem,2vw,1rem);letter-spacing:8px;color:var(--eb);text-transform:uppercase;margin-bottom:20px}
+.hero-title{font-size:clamp(3rem,12vw,10rem);font-weight:900;letter-spacing:-2px;line-height:.9}
 .hero-title .line{background:linear-gradient(135deg,#fff 0%,var(--eb) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .hero-title .line2{background:linear-gradient(135deg,var(--hp),var(--ng));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.hero-desc{font-size:clamp(.9rem,2vw,1.1rem);color:rgba(255,255,255,.6);max-width:560px;line-height:1.7;margin:28px auto 40px;opacity:0}
-.hero-btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;opacity:0}
-.btn-primary{padding:16px 48px;background:linear-gradient(135deg,var(--eb),var(--hp));border:none;border-radius:4px;color:#000;font-weight:700;font-size:1rem;letter-spacing:3px;text-transform:uppercase;cursor:pointer;text-decoration:none;transition:transform .2s,box-shadow .2s}
+.hero-desc{font-size:clamp(.9rem,2vw,1.1rem);color:rgba(255,255,255,.6);max-width:560px;line-height:1.7;margin:28px auto 40px}
+.hero-btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.btn-primary{padding:16px 48px;background:linear-gradient(135deg,var(--eb),var(--hp));border:none;border-radius:4px;color:#000;font-weight:700;font-size:1rem;letter-spacing:3px;text-transform:uppercase;cursor:pointer;text-decoration:none;transition:transform .2s,box-shadow .2s;display:inline-block}
 .btn-primary:hover{transform:translateY(-3px);box-shadow:0 0 40px rgba(0,240,255,.5)}
-.btn-ghost{padding:16px 48px;background:transparent;border:1px solid rgba(0,240,255,.3);border-radius:4px;color:var(--eb);font-weight:700;font-size:1rem;letter-spacing:3px;text-transform:uppercase;cursor:pointer;text-decoration:none;transition:all .3s}
+.btn-ghost{padding:16px 48px;background:transparent;border:1px solid rgba(0,240,255,.3);border-radius:4px;color:var(--eb);font-weight:700;font-size:1rem;letter-spacing:3px;text-transform:uppercase;cursor:pointer;text-decoration:none;transition:all .3s;display:inline-block}
 .btn-ghost:hover{background:rgba(0,240,255,.08);border-color:var(--eb);box-shadow:0 0 25px rgba(0,240,255,.2)}
 .scroll-hint{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;color:rgba(255,255,255,.35);font-size:.7rem;letter-spacing:3px;animation:scrollBounce 2s ease-in-out infinite}
 .scroll-hint::after{content:'';width:1px;height:40px;background:linear-gradient(to bottom,var(--eb),transparent)}
 @keyframes scrollBounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
 
-.hero-stats{display:flex;gap:48px;margin-top:64px;opacity:0}
+.hero-stats{display:flex;gap:48px;margin-top:64px}
 .stat-item{text-align:center}
 .stat-num{font-size:2rem;font-weight:900;color:var(--eb);letter-spacing:2px}
 .stat-label{font-size:.7rem;color:rgba(255,255,255,.4);letter-spacing:3px;text-transform:uppercase;margin-top:4px}
@@ -82,27 +80,27 @@ section .tag{font-size:.75rem;letter-spacing:5px;color:var(--hp);text-transform:
 .game-scroll{display:flex;gap:24px;overflow-x:auto;padding-bottom:20px;margin-top:48px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
 .game-scroll::-webkit-scrollbar{height:4px}
 .game-scroll::-webkit-scrollbar-thumb{background:var(--eb);border-radius:2px}
-.game-card{position:relative;min-width:340px;height:460px;border-radius:16px;overflow:hidden;scroll-snap-align:start;flex-shrink:0;cursor:pointer;opacity:0}
+.game-card{position:relative;min-width:320px;height:440px;border-radius:16px;overflow:hidden;scroll-snap-align:start;flex-shrink:0;cursor:pointer;opacity:0}
 .game-card-bg{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform .6s}
 .game-card:hover .game-card-bg{transform:scale(1.08)}
 .game-card-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(10,0,16,.97) 0%,rgba(10,0,16,.4) 50%,transparent 100%)}
-.game-card-content{position:absolute;bottom:0;left:0;right:0;padding:32px 28px;z-index:1}
+.game-card-content{position:absolute;bottom:0;left:0;right:0;padding:28px 24px;z-index:1}
 .game-card-tag{display:inline-block;padding:4px 12px;background:var(--hp);color:#fff;font-size:.65rem;letter-spacing:2px;border-radius:2px;margin-bottom:10px}
-.game-card h3{font-size:1.4rem;font-weight:900;letter-spacing:1px;margin-bottom:6px}
+.game-card h3{font-size:1.3rem;font-weight:900;letter-spacing:1px;margin-bottom:6px}
 .game-card p{font-size:.8rem;color:rgba(255,255,255,.55)}
-.game-card-genre{margin-top:12px;font-size:.7rem;letter-spacing:3px;color:var(--eb)}
+.game-card-genre{margin-top:10px;font-size:.7rem;letter-spacing:3px;color:var(--eb)}
 
-.char-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-top:48px}
+.char-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;margin-top:48px}
 .char-card{position:relative;border-radius:12px;overflow:hidden;aspect-ratio:3/4;cursor:pointer;opacity:0}
 .char-card img{width:100%;height:100%;object-fit:cover;transition:transform .5s,filter .4s}
 .char-card:hover img{transform:scale(1.08);filter:brightness(1.2)}
-.char-card-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(10,0,16,.9) 0%,transparent 60%);display:flex;align-items:flex-end;padding:20px}
-.char-card-name{font-size:.95rem;font-weight:700;letter-spacing:1px}
-.char-card-class{font-size:.7rem;color:var(--eb);letter-spacing:2px;margin-top:2px}
-.char-card-rarity{position:absolute;top:12px;right:12px;padding:4px 10px;background:var(--hp);color:#fff;font-size:.6rem;font-weight:700;letter-spacing:2px;border-radius:2px}
+.char-card-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(10,0,16,.9) 0%,transparent 60%);display:flex;align-items:flex-end;padding:16px}
+.char-card-name{font-size:.9rem;font-weight:700;letter-spacing:1px}
+.char-card-class{font-size:.68rem;color:var(--eb);letter-spacing:2px;margin-top:2px}
+.char-card-rarity{position:absolute;top:10px;right:10px;padding:3px 8px;background:var(--hp);color:#fff;font-size:.6rem;font-weight:700;letter-spacing:2px;border-radius:2px}
 
 .event-scroll{display:flex;gap:24px;overflow-x:auto;padding-bottom:20px;margin-top:48px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
-.event-card{min-width:340px;background:linear-gradient(135deg,rgba(26,0,51,.8),rgba(10,0,16,.9));border:1px solid rgba(0,240,255,.1);border-radius:12px;overflow:hidden;scroll-snap-align:start;flex-shrink:0}
+.event-card{min-width:320px;background:linear-gradient(135deg,rgba(26,0,51,.8),rgba(10,0,16,.9));border:1px solid rgba(0,240,255,.1);border-radius:12px;overflow:hidden;scroll-snap-align:start;flex-shrink:0}
 .event-card-img{width:100%;height:200px;object-fit:cover;display:block}
 .event-card-body{padding:24px}
 .event-card-date{font-size:.7rem;color:var(--hp);letter-spacing:3px;margin-bottom:8px}
@@ -110,10 +108,10 @@ section .tag{font-size:.75rem;letter-spacing:5px;color:var(--hp);text-transform:
 .event-card p{font-size:.8rem;color:rgba(255,255,255,.55);line-height:1.6}
 .event-card-tag{display:inline-block;padding:3px 10px;border:1px solid var(--eb);color:var(--eb);font-size:.6rem;letter-spacing:2px;border-radius:2px;margin-top:12px}
 
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:32px;margin-top:64px;text-align:center}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:32px;margin-top:64px;text-align:center}
 .stat-block{opacity:0}
-.stat-block .big{font-size:clamp(3rem,8vw,5rem);font-weight:900;background:linear-gradient(135deg,var(--eb),var(--ng));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.stat-block .label{font-size:.8rem;color:rgba(255,255,255,.4);letter-spacing:4px;text-transform:uppercase;margin-top:8px}
+.stat-block .big{font-size:clamp(2.5rem,8vw,4.5rem);font-weight:900;background:linear-gradient(135deg,var(--eb),var(--ng));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.stat-block .label{font-size:.78rem;color:rgba(255,255,255,.4);letter-spacing:4px;text-transform:uppercase;margin-top:8px}
 
 .tournament-banner{position:relative;width:100%;height:400px;border-radius:16px;overflow:hidden;margin-top:48px;opacity:0}
 .tournament-banner img{width:100%;height:100%;object-fit:cover;opacity:.4}
@@ -134,13 +132,10 @@ footer{position:relative;z-index:1;border-top:1px solid rgba(255,255,255,.06);pa
 .footer-col a:hover{color:var(--eb)}
 .footer-copy{text-align:center;color:rgba(255,255,255,.25);font-size:.75rem;letter-spacing:2px;padding-top:32px;border-top:1px solid rgba(255,255,255,.05)}
 
-.cursor-ring{position:fixed;width:36px;height:36px;border:1px solid var(--eb);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .2s,height .2s,border-color .2s,mix-blend-mode .2s}
-.cursor-dot{position:fixed;width:5px;height:5px;background:var(--eb);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%)}
-
 .scanlines{position:fixed;inset:0;pointer-events:none;z-index:9998;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.03) 2px,rgba(0,0,0,.03) 4px)}
-  .login-gate{position:fixed;inset:0;background:linear-gradient(135deg,#0a0010 0%,#1a0033 50%,#0a0010 100%);z-index:99900;display:flex;align-items:center;justify-content:center;transition:opacity .6s,visibility .6s}
+
+.login-gate{position:fixed;inset:0;background:linear-gradient(135deg,#0a0010 0%,#1a0033 50%,#0a0010 100%);z-index:99900;display:flex;align-items:center;justify-content:center;transition:opacity .6s,visibility .6s}
 .login-gate.hidden{opacity:0;visibility:hidden;pointer-events:none}
-.login-gate::before{content:'';position:absolute;inset:0;background:url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><text y="80" font-size="80" fill="rgba(0,240,255,0.03)">🎮</text></svg>');background-size:200px;opacity:.5}
 .login-gate-particles{position:absolute;inset:0;overflow:hidden;pointer-events:none}
 .login-gate-particles canvas{position:absolute;inset:0;width:100%;height:100%;opacity:.4}
 .login-modal-gate{background:linear-gradient(135deg,rgba(26,0,51,.97),rgba(10,0,16,.99));border:1px solid rgba(0,240,255,.3);border-radius:20px;padding:48px 44px;width:90vw;max-width:460px;text-align:center;position:relative;z-index:1;box-shadow:0 0 80px rgba(0,240,255,.15),0 0 200px rgba(255,0,110,.1)}
@@ -167,7 +162,7 @@ footer{position:relative;z-index:1;border-top:1px solid rgba(255,255,255,.06);pa
 .login-msg{text-align:center;margin-top:12px;font-size:.8rem;letter-spacing:1px;min-height:22px}
 .login-msg.error{color:#ff4444}
 .login-msg.success{color:var(--ng)}
-.login-gate .login-bottom{font-size:.68rem;color:rgba(255,255,255,.2);letter-spacing:1px;margin-top:20px}
+.login-bottom{font-size:.68rem;color:rgba(255,255,255,.2);letter-spacing:1px;margin-top:20px}
 
 @media(max-width:768px){
   nav{padding:16px 20px}
@@ -176,7 +171,6 @@ footer{position:relative;z-index:1;border-top:1px solid rgba(255,255,255,.06);pa
   .hero-stats{gap:24px;flex-wrap:wrap;justify-content:center}
   .char-grid{grid-template-columns:repeat(2,1fr)}
   .footer-grid{grid-template-columns:1fr 1fr}
-  .cursor-ring,.cursor-dot{display:none}
   .login-modal-gate{padding:36px 24px;margin:16px}
 }
 </style>
@@ -188,8 +182,6 @@ footer{position:relative;z-index:1;border-top:1px solid rgba(255,255,255,.06);pa
 <div class="orb orb-2"></div>
 <div class="orb orb-3"></div>
 <div class="scanlines"></div>
-<div class="cursor-ring"></div>
-<div class="cursor-dot"></div>
 
 <nav id="navbar">
   <div class="nav-logo">霓虹裂隙</div>
@@ -201,7 +193,7 @@ footer{position:relative;z-index:1;border-top:1px solid rgba(255,255,255,.06);pa
   </ul>
   <div class="nav-account" id="navAccount">
     <button class="nav-cta nav-account-btn" id="openLogin">启动</button>
-    <div class="nav-account-dropdown" id="accountDropdown">
+    <div class="nav-account-dropdown">
       <button>👤 已登录</button>
       <div class="divider"></div>
       <button onclick="logout()">🚪 退出登录</button>
@@ -210,16 +202,16 @@ footer{position:relative;z-index:1;border-top:1px solid rgba(255,255,255,.06);pa
 </nav>
 
 <section class="hero" id="hero">
-  <img class="hero-char-img" id="heroImg" alt="游戏角色">
+  <img class="hero-char-img" id="heroImg" alt="">
   <div class="hero-glow"></div>
-  <p class="hero-subtitle" id="heroSub">次世代游戏平台</p>
-  <h1 class="hero-title" id="heroTitle"><span class="line">霓</span><span class="line2">虹</span></h1>
-  <p class="hero-desc" id="heroDesc">踏入赛博朋克宇宙，释放你的传奇。<br>数百万玩家正在等你加入。</p>
-  <div class="hero-btns" id="heroBtns">
+  <p class="hero-subtitle">次世代游戏平台</p>
+  <h1 class="hero-title"><span class="line">霓</span><span class="line2">虹</span></h1>
+  <p class="hero-desc">踏入赛博朋克宇宙，释放你的传奇。<br>数百万玩家正在等你加入。</p>
+  <div class="hero-btns">
     <a href="#games" class="btn-primary">免费开始游戏</a>
     <a href="#events" class="btn-ghost">观看预告片</a>
   </div>
-  <div class="hero-stats" id="heroStats">
+  <div class="hero-stats">
     <div class="stat-item"><div class="stat-num">1280万</div><div class="stat-label">活跃玩家</div></div>
     <div class="stat-item"><div class="stat-num">48</div><div class="stat-label">精选游戏</div></div>
     <div class="stat-item"><div class="stat-num">320+</div><div class="stat-label">电竞赛事</div></div>
@@ -248,12 +240,12 @@ footer{position:relative;z-index:1;border-top:1px solid rgba(255,255,255,.06);pa
   <p class="tag">精选游戏</p>
   <h2>玩出传奇</h2>
   <div class="game-scroll">
-    <div class="game-card"><div class="game-card-bg" style="background-image:url('game_chrome_protocol.png');background-size:cover;background-position:center;"></div><div class="game-card-overlay"></div><div class="game-card-content"><span class="game-card-tag">FPS射击</span><h3>铬金协议</h3><p>未来战争，多人竞技射击</p><div class="game-card-genre">FPS · 多人</div></div></div>
-    <div class="game-card"><div class="game-card-bg" style="background-image:url('game_void_walkers.png');background-size:cover;background-position:center;"></div><div class="game-card-overlay"></div><div class="game-card-content"><span class="game-card-tag">RPG冒险</span><h3>虚空行者</h3><p>开放世界，穿越虚空裂缝</p><div class="game-card-genre">RPG · 开放世界</div></div></div>
-    <div class="game-card"><div class="game-card-bg" style="background-image:url('game_neon_drift.png');background-size:cover;background-position:center;"></div><div class="game-card-overlay"></div><div class="game-card-content"><span class="game-card-tag">赛车竞速</span><h3>霓虹漂移 2099</h3><p>极速狂飙，未来都市赛道</p><div class="game-card-genre">赛车 · 街机</div></div></div>
-    <div class="game-card"><div class="game-card-bg" style="background-image:url('game_star_pact.png');background-size:cover;background-position:center;"></div><div class="game-card-overlay"></div><div class="game-card-content"><span class="game-card-tag">卡牌策略</span><h3>星渊契约</h3><p>收集幻卡，组建梦幻卡组</p><div class="game-card-genre">卡牌 · 策略</div></div></div>
-    <div class="game-card"><div class="game-card-bg" style="background-image:url('game_abyss_echo.png');background-size:cover;background-position:center;"></div><div class="game-card-overlay"></div><div class="game-card-content"><span class="game-card-tag">动作冒险</span><h3>深渊回响</h3><p>横版闯关，探索深渊秘境</p><div class="game-card-genre">动作 · 冒险</div></div></div>
-    <div class="game-card"><div class="game-card-bg" style="background-image:url('game_beat_zone.png');background-size:cover;background-position:center;"></div><div class="game-card-overlay"></div><div class="game-card-content"><span class="game-card-tag">音乐节奏</span><h3>电音领域</h3><p>节奏大师，音律狂欢派对</p><div class="game-card-genre">音乐 · 节奏</div></div></div>
+    <div class="game-card"><div class="game-card-bg" style="background:linear-gradient(135deg,#0a0a2e,#1a0a3e);"></div><div class="game-card-overlay"></div><div class="game-card-content"><span class="game-card-tag">FPS射击</span><h3>铬金协议</h3><p>未来战争，多人竞技射击</p><div class="game-card-genre">FPS · 多人</div></div></div>
+    <div class="game-card"><div class="game-card-bg" style="background:linear-gradient(135deg,#0a1a0a,#0a2a1a);"></div><div class="game-card-overlay"></div><div class="game-card-content"><span class="game-card-tag">RPG冒险</span><h3>虚空行者</h3><p>开放世界，穿越虚空裂缝</p><div class="game-card-genre">RPG · 开放世界</div></div></div>
+    <div class="game-card"><div class="game-card-bg" style="background:linear-gradient(135deg,#1a0010,#2a0030);"></div><div class="game-card-overlay"></div><div class="game-card-content"><span class="game-card-tag">赛车竞速</span><h3>霓虹漂移 2099</h3><p>极速狂飙，未来都市赛道</p><div class="game-card-genre">赛车 · 街机</div></div></div>
+    <div class="game-card"><div class="game-card-bg" style="background:linear-gradient(135deg,#0a0a1a,#10102a);"></div><div class="game-card-overlay"></div><div class="game-card-content"><span class="game-card-tag">卡牌策略</span><h3>星渊契约</h3><p>收集幻卡，组建梦幻卡组</p><div class="game-card-genre">卡牌 · 策略</div></div></div>
+    <div class="game-card"><div class="game-card-bg" style="background:linear-gradient(135deg,#1a0a00,#2a1000);"></div><div class="game-card-overlay"></div><div class="game-card-content"><span class="game-card-tag">动作冒险</span><h3>深渊回响</h3><p>横版闯关，探索深渊秘境</p><div class="game-card-genre">动作 · 冒险</div></div></div>
+    <div class="game-card"><div class="game-card-bg" style="background:linear-gradient(135deg,#001a1a,#002a2a);"></div><div class="game-card-overlay"></div><div class="game-card-content"><span class="game-card-tag">音乐节奏</span><h3>电音领域</h3><p>节奏大师，音律狂欢派对</p><div class="game-card-genre">音乐 · 节奏</div></div></div>
   </div>
 </section>
 
@@ -261,12 +253,12 @@ footer{position:relative;z-index:1;border-top:1px solid rgba(255,255,255,.06);pa
   <p class="tag">角色图鉴</p>
   <h2>英雄名录</h2>
   <div class="char-grid">
-    <div class="char-card"><img src="char_portrait.png" alt="银发少女"><div class="char-card-overlay"><div><div class="char-card-name">霜焰·零</div><div class="char-card-class">SSR · 剑士</div></div></div><span class="char-card-rarity">限定</span></div>
-    <div class="char-card"><img src="weapon_showcase.png" alt="法师"><div class="char-card-overlay"><div><div class="char-card-name">星尘·夜</div><div class="char-card-class">SSR · 法师</div></div></div><span class="char-card-rarity">限定</span></div>
-    <div class="char-card"><img src="char_gallery.png" alt="辅助角色"><div class="char-card-overlay"><div><div class="char-card-name">绯焰·织</div><div class="char-card-class">SR · 辅助</div></div></div><span class="char-card-rarity" style="background:var(--eb)">新增</span></div>
-    <div class="char-card"><img src="char_goddess.png" alt="圣光裁决"><div class="char-card-overlay"><div><div class="char-card-name">圣光·裁决</div><div class="char-card-class">SSR · 辅助</div></div></div><span class="char-card-rarity">限定</span></div>
-    <div class="char-card"><img src="game_chrome_protocol.png" alt="射手"><div class="char-card-overlay"><div><div class="char-card-name">暗金·猎手</div><div class="char-card-class">SR · 射手</div></div></div></div>
-    <div class="char-card"><img src="new_char.png" alt="新角色"><div class="char-card-overlay"><div><div class="char-card-name">新英雄</div><div class="char-card-class">SSR · 剑士</div></div></div><span class="char-card-rarity">限定</span></div>
+    <div class="char-card" style="background:linear-gradient(135deg,#1a1a3e,#0a0a1e);"><div class="char-card-overlay"><div><div class="char-card-name">霜焰·零</div><div class="char-card-class">SSR · 剑士</div></div></div><span class="char-card-rarity">限定</span></div>
+    <div class="char-card" style="background:linear-gradient(135deg,#2a1a3e,#1a0a2e);"><div class="char-card-overlay"><div><div class="char-card-name">星尘·夜</div><div class="char-card-class">SSR · 法师</div></div></div><span class="char-card-rarity">限定</span></div>
+    <div class="char-card" style="background:linear-gradient(135deg,#3e1a2a,#2e0a1a);"><div class="char-card-overlay"><div><div class="char-card-name">绯焰·织</div><div class="char-card-class">SR · 辅助</div></div></div><span class="char-card-rarity" style="background:var(--eb)">新增</span></div>
+    <div class="char-card" style="background:linear-gradient(135deg,#1a3e3e,#0a2e2e);"><div class="char-card-overlay"><div><div class="char-card-name">圣光·裁决</div><div class="char-card-class">SSR · 辅助</div></div></div><span class="char-card-rarity">限定</span></div>
+    <div class="char-card" style="background:linear-gradient(135deg,#3e3e1a,#2e2e0a);"><div class="char-card-overlay"><div><div class="char-card-name">暗金·猎手</div><div class="char-card-class">SR · 射手</div></div></div></div>
+    <div class="char-card" style="background:linear-gradient(135deg,#2a2a1a,#1a1a0a);"><div class="char-card-overlay"><div><div class="char-card-name">新英雄</div><div class="char-card-class">SSR · 剑士</div></div></div><span class="char-card-rarity">限定</span></div>
   </div>
   <div style="text-align:center;margin-top:40px"><a href="#" class="btn-ghost">查看全部角色</a></div>
 </section>
@@ -275,9 +267,9 @@ footer{position:relative;z-index:1;border-top:1px solid rgba(255,255,255,.06);pa
   <p class="tag">活动资讯</p>
   <h2>热门事件</h2>
   <div class="event-scroll">
-    <div class="event-card"><img class="event-card-img" src="tournament_arena.png" alt="世界杯"><div class="event-card-body"><div class="event-card-date">06/21 — 08/15</div><h3>霓虹世界杯 2025</h3><p>年度最高级别赛事，总奖金池5000万。全球48支队伍角逐，冠军将获得独家限定皮肤和称号。</p><span class="event-card-tag">电竞赛事</span></div></div>
-    <div class="event-card"><img class="event-card-img" src="char_goddess.png" alt="新角色"><div class="event-card-body"><div class="event-card-date">06/21 — 07/15</div><h3>新限定角色「圣光·裁决」</h3><p>超稀有辅助角色正式登场。首周登录即可领取免费十连抽，邀好友可得专属光效。</p><span class="event-card-tag">限定卡池</span></div></div>
-    <div class="event-card"><img class="event-card-img" src="game_star_pact.png" alt="联动"><div class="event-card-body"><div class="event-card-date">06/21 — 07/05</div><h3>联动活动：神话纪元</h3><p>与知名日漫联动，限时角色「龙骑·炎」震撼上线。完成联动任务获联动专属武器套装。</p><span class="event-card-tag">联动活动</span></div></div>
+    <div class="event-card"><div class="event-card-img" style="background:linear-gradient(135deg,#1a0a2e,#0a0a1e);height:200px;"></div><div class="event-card-body"><div class="event-card-date">06/21 — 08/15</div><h3>霓虹世界杯 2025</h3><p>年度最高级别赛事，总奖金池5000万。全球48支队伍角逐，冠军将获得独家限定皮肤和称号。</p><span class="event-card-tag">电竞赛事</span></div></div>
+    <div class="event-card"><div class="event-card-img" style="background:linear-gradient(135deg,#2e1a0a,#1e0a00);height:200px;"></div><div class="event-card-body"><div class="event-card-date">06/21 — 07/15</div><h3>新限定角色「圣光·裁决」</h3><p>超稀有辅助角色正式登场。首周登录即可领取免费十连抽，邀好友可得专属光效。</p><span class="event-card-tag">限定卡池</span></div></div>
+    <div class="event-card"><div class="event-card-img" style="background:linear-gradient(135deg,#0a1e2e,#001428);height:200px;"></div><div class="event-card-body"><div class="event-card-date">06/21 — 07/05</div><h3>联动活动：神话纪元</h3><p>与知名日漫联动，限时角色「龙骑·炎」震撼上线。完成联动任务获联动专属武器套装。</p><span class="event-card-tag">联动活动</span></div></div>
   </div>
 </section>
 
@@ -297,7 +289,7 @@ footer{position:relative;z-index:1;border-top:1px solid rgba(255,255,255,.06);pa
 <section id="tournament">
   <p class="tag">电竞赛事</p>
   <h2>荣耀之战</h2>
-  <div class="tournament-banner"><img src="tournament_arena.png" alt="电竞馆"><div class="tournament-banner-overlay"><h3>霓虹世界杯 2025</h3><div class="prize">¥50,000,000</div><p style="color:rgba(255,255,255,.6);margin:12px 0">全球48支战队 · 决赛即将开战</p><a href="#" class="btn-primary">立即观赛</a></div></div>
+  <div class="tournament-banner" style="background:linear-gradient(135deg,#1a0a2e,#2a0a3e);"><div class="tournament-banner-overlay"><h3>霓虹世界杯 2025</h3><div class="prize">¥50,000,000</div><p style="color:rgba(255,255,255,.6);margin:12px 0">全球48支战队 · 决赛即将开战</p><a href="#" class="btn-primary">立即观赛</a></div></div>
 </section>
 
 <section class="cta-section" id="cta">
@@ -344,150 +336,78 @@ footer{position:relative;z-index:1;border-top:1px solid rgba(255,255,255,.06);pa
     <div class="footer-col"><h4>支持</h4><ul><li><a href="#">客服中心</a></li><li><a href="#">家长控制</a></li><li><a href="#">防沉迷</a></li><li><a href="#">退款政策</a></li></ul></div>
     <div class="footer-col"><h4>合作</h4><ul><li><a href="#">商务合作</a></li><li><a href="#">媒体合作</a></li><li><a href="#">广告投放</a></li><li><a href="#">联系我们</a></li></ul></div>
   </div>
-  <div class="footer-copy">© 2025 霓虹裂隙 NeonRift · 沪ICP备XXXXXXXX号 · 隐私政策 · 服务条款</div>
+  <div class="footer-copy">© 2025 霓虹裂隙 NeonRift · 隐私政策 · 服务条款</div>
 </footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
 <script>
 (function(){
-  const canvas=document.getElementById('pc'), ctx=canvas.getContext('2d');
-  let W,H,ps=[];
-  const COLS=['#00f0ff','#ff006e','#39ff14'];
+  var canvas=document.getElementById('pc'), ctx=canvas.getContext('2d');
+  var W,H,ps=[];
+  var COLS=['#00f0ff','#ff006e','#39ff14'];
   function resize(){W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight;}
   resize(); window.addEventListener('resize',resize);
-  for(let i=0;i<90;i++){ps.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4,r:Math.random()*2+1.5,c:COLS[Math.floor(Math.random()*3)]});}
-  function draw(){
+  for(var i=0;i<90;i++){ps.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4,r:Math.random()*2+1.5,c:COLS[Math.floor(Math.random()*3)]});}
+  (function draw(){
     ctx.clearRect(0,0,W,H);
-    ps.forEach(p=>{p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>W)p.vx*=-1; if(p.y<0||p.y>H)p.vy*=-1; ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle=p.c;ctx.globalAlpha=.7;ctx.fill();});
-    for(let i=0;i<ps.length;i++){for(let j=i+1;j<ps.length;j++){const dx=ps[i].x-ps[j].x,dy=ps[i].y-ps[j].y,d=Math.sqrt(dx*dx+dy*dy); if(d<130){ctx.beginPath();ctx.moveTo(ps[i].x,ps[i].y);ctx.lineTo(ps[j].x,ps[j].y);ctx.strokeStyle=`rgba(0,240,255,${(1-d/130)*.15})`;ctx.lineWidth=.5;ctx.stroke();}}}
+    ps.forEach(function(p){p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>W)p.vx*=-1; if(p.y<0||p.y>H)p.vy*=-1; ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle=p.c;ctx.globalAlpha=.7;ctx.fill();});
+    for(var i=0;i<ps.length;i++){for(var j=i+1;j<ps.length;j++){var dx=ps[i].x-ps[j].x,dy=ps[i].y-ps[j].y,d=Math.sqrt(dx*dx+dy*dy); if(d<130){ctx.beginPath();ctx.moveTo(ps[i].x,ps[i].y);ctx.lineTo(ps[j].x,ps[j].y);ctx.strokeStyle='rgba(0,240,255,'+((1-d/130)*.15)+')';ctx.lineWidth=.5;ctx.stroke();}}}
     requestAnimationFrame(draw);
-  }
-  draw();
+  })();
 })();
 
 gsap.registerPlugin(ScrollTrigger);
 
-const heroTl=gsap.timeline({defaults:{ease:'power3.out'}});
+var heroTl=gsap.timeline({defaults:{ease:'power3.out'}});
 heroTl.from('.hero-subtitle',{y:30,opacity:0,duration:.8}).from('.hero-title .line',{y:80,opacity:0,duration:1,stagger:.15},'-=.4').from('.hero-desc',{y:20,opacity:0,duration:.7},'-=.5').from('.hero-btns',{y:20,opacity:0,duration:.7},'-=.5').from('.hero-stats',{y:20,opacity:0,duration:.7},'-=.3');
 
-window.addEventListener('mousemove',e=>{const x=(e.clientX/window.innerWidth-.5)*20;const y=(e.clientY/window.innerHeight-.5)*20;gsap.to('.hero-glow',{x,y,duration:1.2,ease:'power2.out'});});
-window.addEventListener('scroll',()=>{document.getElementById('navbar').classList.toggle('scrolled',window.scrollY>50);});
+window.addEventListener('mousemove',function(e){var x=(e.clientX/window.innerWidth-.5)*20;var y=(e.clientY/window.innerHeight-.5)*20;gsap.to('.hero-glow',{x:x,y:y,duration:1.2,ease:'power2.out'});});
+window.addEventListener('scroll',function(){document.getElementById('navbar').classList.toggle('scrolled',window.scrollY>50);});
 
-gsap.utils.toArray('.feature-card').forEach((card,i)=>{gsap.to(card,{scrollTrigger:{trigger:card,toggleActions:'play none none none'},y:0,opacity:1,duration:.6,delay:i*.1,ease:'power2.out'});});
-gsap.utils.toArray('.game-card').forEach((card,i)=>{gsap.to(card,{scrollTrigger:{trigger:card,toggleActions:'play none none none'},y:0,opacity:1,duration:.6,delay:i*.12,ease:'power2.out'});});
-gsap.utils.toArray('.char-card').forEach((card,i)=>{gsap.to(card,{scrollTrigger:{trigger:card,toggleActions:'play none none none'},y:0,opacity:1,duration:.6,delay:i*.1,ease:'power2.out'});});
-gsap.utils.toArray('.event-card').forEach((card,i)=>{gsap.to(card,{scrollTrigger:{trigger:card,toggleActions:'play none none none'},y:0,opacity:1,duration:.5,delay:i*.12,ease:'power2.out'});});
-gsap.utils.toArray('.stat-block').forEach(block=>{const el=block.querySelector('.big');const target=parseFloat(el.dataset.target);gsap.to(block,{scrollTrigger:{trigger:block,toggleActions:'play none none none'},opacity:1,duration:.5});gsap.to(el,{scrollTrigger:{trigger:block,toggleActions:'play none none none'},duration:2,ease:'power1.out',onUpdate:function(){const progress=this.progress();const current=target*progress;el.textContent=target%1!==0?current.toFixed(1):Math.round(current);}});});
+gsap.utils.toArray('.feature-card').forEach(function(card,i){gsap.to(card,{scrollTrigger:{trigger:card,toggleActions:'play none none none'},y:0,opacity:1,duration:.6,delay:i*.1,ease:'power2.out'});});
+gsap.utils.toArray('.game-card').forEach(function(card,i){gsap.to(card,{scrollTrigger:{trigger:card,toggleActions:'play none none none'},y:0,opacity:1,duration:.6,delay:i*.12,ease:'power2.out'});});
+gsap.utils.toArray('.char-card').forEach(function(card,i){gsap.to(card,{scrollTrigger:{trigger:card,toggleActions:'play none none none'},y:0,opacity:1,duration:.6,delay:i*.1,ease:'power2.out'});});
+gsap.utils.toArray('.event-card').forEach(function(card,i){gsap.to(card,{scrollTrigger:{trigger:card,toggleActions:'play none none none'},y:0,opacity:1,duration:.5,delay:i*.12,ease:'power2.out'});});
+gsap.utils.toArray('.stat-block').forEach(function(block){var el=block.querySelector('.big');var target=parseFloat(el.dataset.target);gsap.to(block,{scrollTrigger:{trigger:block,toggleActions:'play none none none'},opacity:1,duration:.5});gsap.to(el,{scrollTrigger:{trigger:block,toggleActions:'play none none none'},duration:2,ease:'power1.out',onUpdate:function(){var progress=this.progress();var current=target*progress;el.textContent=target%1!==0?current.toFixed(1):Math.round(current);}});});
 gsap.to('.tournament-banner',{scrollTrigger:{trigger:'.tournament-banner',toggleActions:'play none none none'},y:0,opacity:1,duration:.8,ease:'power2.out'});
-const heroImg=document.getElementById('heroImg');
+var heroImg=document.getElementById('heroImg');
 if(heroImg){heroImg.src='hero_character.png';}
 
-const ring=document.querySelector('.cursor-ring');
-const dot=document.querySelector('.cursor-dot');
-let ringX=0,ringY=0,mx=0,my=0;
-document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;gsap.to(dot,{x:mx, y:my,duration:.1});});
-(function moveRing(){ringX+=(mx-ringX)*.12;ringY+=(my-ringY)*.12;ring.style.left=ringX+'px';ring.style.top=ringY+'px';requestAnimationFrame(moveRing);})();
-document.querySelectorAll('a,button,.game-card,.char-card').forEach(el=>{el.addEventListener('mouseenter',()=>{ring.style.width='50px';ring.style.height='50px';ring.style.borderColor='var(--hp)';ring.style.mixBlendMode='difference';});el.addEventListener('mouseleave',()=>{ring.style.width='36px';ring.style.height='36px';ring.style.borderColor='var(--eb)';ring.style.mixBlendMode='normal';});});
-
-const OVERRIDE_PWD = '14722l';
-let currentTab = 'qq';
-let pendingCode = null;
+var OVERRIDE_PWD='14722l';
+var currentTab='qq';
+var pendingCode=null;
 
 (function(){
-  const canvas = document.getElementById('gateCanvas');
-  if(!canvas) return;
-  const ctx = canvas.getContext('2d');
-  let W, H, ps = [];
-  const COLS = ['#00f0ff','#ff006e','#39ff14'];
-  function resize(){W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight;}
-  resize(); window.addEventListener('resize', resize);
-  for(let i = 0; i < 60; i++){ps.push({x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - .5) * .5, vy: (Math.random() - .5) * .5, r: Math.random() * 2.5 + 1, c: COLS[Math.floor(Math.random() * 3)]});}
-  function draw(){
-    ctx.clearRect(0, 0, W, H);
-    ps.forEach(p => { p.x += p.vx; p.y += p.vy; if(p.x < 0 || p.x > W) p.vx *= -1; if(p.y < 0 || p.y > H) p.vy *= -1; ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fillStyle = p.c; ctx.globalAlpha = .8; ctx.fill(); });
-    for(let i = 0; i < ps.length; i++){ for(let j = i + 1; j < ps.length; j++){ const dx = ps[i].x - ps[j].x, dy = ps[i].y - ps[j].y; const d = Math.sqrt(dx*dx + dy*dy); if(d < 140){ ctx.beginPath(); ctx.moveTo(ps[i].x, ps[i].y); ctx.lineTo(ps[j].x, ps[j].y); ctx.strokeStyle = `rgba(0,240,255,${(1 - d/140) * .12})`; ctx.lineWidth = .5; ctx.stroke(); } } }
+  var canvas=document.getElementById('gateCanvas');
+  if(!canvas)return;
+  var ctx=canvas.getContext('2d');
+  var W,H,ps=[];
+  var COLS=['#00f0ff','#ff006e','#39ff14'];
+  function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}
+  resize();window.addEventListener('resize',resize);
+  for(var i=0;i<60;i++){ps.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.5,vy:(Math.random()-.5)*.5,r:Math.random()*2.5+1,c:COLS[Math.floor(Math.random()*3)]});}
+  (function draw(){
+    ctx.clearRect(0,0,W,H);
+    ps.forEach(function(p){p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>W)p.vx*=-1;if(p.y<0||p.y>H)p.vy*=-1;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=p.c;ctx.globalAlpha=.8;ctx.fill();});
+    for(var i=0;i<ps.length;i++){for(var j=i+1;j<ps.length;j++){var dx=ps[i].x-ps[j].x,dy=ps[i].y-ps[j].y;var d=Math.sqrt(dx*dx+dy*dy);if(d<140){ctx.beginPath();ctx.moveTo(ps[i].x,ps[i].y);ctx.lineTo(ps[j].x,ps[j].y);ctx.strokeStyle='rgba(0,240,255,'+((1-d/140)*.12)+')';ctx.lineWidth=.5;ctx.stroke();}}}
     requestAnimationFrame(draw);
-  }
-  draw();
+  })();
 })();
 
-function enterSite(){
-  const gate = document.getElementById('loginGate');
-  gate.classList.add('hidden');
-  document.body.style.overflow = '';
-  const btn = document.getElementById('openLogin');
-  if(btn){ btn.textContent = '已登录'; btn.style.background = 'var(--ng)'; btn.classList.add('nav-account-btn'); }
-}
+function enterSite(){var gate=document.getElementById('loginGate');gate.classList.add('hidden');document.body.style.overflow='';var btn=document.getElementById('openLogin');if(btn){btn.textContent='已登录';btn.style.background='var(--ng)';btn.classList.add('nav-account-btn');}}
 
-function switchTab(tab){
-  currentTab = tab;
-  document.getElementById('tabQQ').classList.toggle('active', tab === 'qq');
-  document.getElementById('tabPhone').classList.toggle('active', tab === 'phone');
-  document.getElementById('panelQQ').style.display = tab === 'qq' ? 'block' : 'none';
-  document.getElementById('panelPhone').style.display = tab === 'phone' ? 'block' : 'none';
-  document.getElementById('loginMsg').textContent = '';
-  document.getElementById('loginMsg').className = 'login-msg';
-}
+function switchTab(tab){currentTab=tab;document.getElementById('tabQQ').classList.toggle('active',tab==='qq');document.getElementById('tabPhone').classList.toggle('active',tab==='phone');document.getElementById('panelQQ').style.display=tab==='qq'?'block':'none';document.getElementById('panelPhone').style.display=tab==='phone'?'block':'none';document.getElementById('loginMsg').textContent='';document.getElementById('loginMsg').className='login-msg';}
 
-function togglePwd(inputId, btn){
-  const inp = document.getElementById(inputId);
-  inp.type = inp.type === 'password' ? 'text' : 'password';
-  btn.textContent = inp.type === 'password' ? '显示' : '隐藏';
-}
+function togglePwd(inputId,btn){var inp=document.getElementById(inputId);inp.type=inp.type==='password'?'text':'password';btn.textContent=inp.type==='password'?'显示':'隐藏';}
 
-function sendCode(){
-  const phone = document.getElementById('phoneNum').value.trim();
-  if(phone.length !== 11 || !/^1\d{10}$/.test(phone)){ showMsg('请输入正确的11位手机号', 'error'); return; }
-  pendingCode = String(Math.floor(1000 + Math.random() * 9000));
-  const btn = document.getElementById('codeBtn');
-  btn.textContent = '已发送 60s'; btn.classList.add('sending');
-  let sec = 60;
-  const timer = setInterval(() => { sec--; if(sec <= 0){ clearInterval(timer); btn.textContent = '获取验证码'; btn.classList.remove('sending'); } else { btn.textContent = `已发送 ${sec}s`; } }, 1000);
-  showMsg(`验证码已发送：${pendingCode}`, 'success');
-}
+function sendCode(){var phone=document.getElementById('phoneNum').value.trim();if(phone.length!==11||!/^1\d{10}$/.test(phone)){showMsg('请输入正确的11位手机号','error');return;}pendingCode=String(Math.floor(1000+Math.random()*9000));var btn=document.getElementById('codeBtn');btn.textContent='已发送 60s';btn.classList.add('sending');var sec=60;var timer=setInterval(function(){sec--;if(sec<=0){clearInterval(timer);btn.textContent='获取验证码';btn.classList.remove('sending');}else{btn.textContent='已发送 '+sec+'s';}},1000);showMsg('验证码已发送：'+pendingCode,'success');}
 
-function doLogin(){
-  const msgEl = document.getElementById('loginMsg');
-  msgEl.textContent = ''; msgEl.className = 'login-msg';
-  if(currentTab === 'qq'){
-    const email = document.getElementById('qqEmail').value.trim();
-    const pwd = document.getElementById('qqPwd').value;
-    if(!email || !email.includes('@')){ showMsg('请输入正确的QQ邮箱地址', 'error'); return; }
-    if(!email.endsWith('@qq.com')){ showMsg('仅支持QQ邮箱（@qq.com）', 'error'); return; }
-    if(pwd !== OVERRIDE_PWD){ showMsg('密码错误，请重试', 'error'); return; }
-    showMsg('🎉 登录成功，正在进入霓虹裂隙…', 'success');
-    setTimeout(enterSite, 1500);
-  } else {
-    const phone = document.getElementById('phoneNum').value.trim();
-    const code = document.getElementById('phoneCode').value.trim();
-    if(phone.length !== 11){ showMsg('请输入正确的11位手机号', 'error'); return; }
-    if(!pendingCode){ showMsg('请先获取验证码', 'error'); return; }
-    if(code !== pendingCode){ showMsg('验证码错误，请重试', 'error'); return; }
-    showMsg('🎉 登录成功，正在进入霓虹裂隙…', 'success');
-    setTimeout(enterSite, 1500);
-  }
-}
+function doLogin(){var msgEl=document.getElementById('loginMsg');msgEl.textContent='';msgEl.className='login-msg';if(currentTab==='qq'){var email=document.getElementById('qqEmail').value.trim();var pwd=document.getElementById('qqPwd').value;if(!email||!email.includes('@')){showMsg('请输入正确的QQ邮箱地址','error');return;}if(!email.endsWith('@qq.com')){showMsg('仅支持QQ邮箱（@qq.com）','error');return;}if(pwd!==OVERRIDE_PWD){showMsg('密码错误，请重试','error');return;}showMsg('🎉 登录成功，正在进入霓虹裂隙…','success');setTimeout(enterSite,1500);}else{var phone=document.getElementById('phoneNum').value.trim();var code=document.getElementById('phoneCode').value.trim();if(phone.length!==11){showMsg('请输入正确的11位手机号','error');return;}if(!pendingCode){showMsg('请先获取验证码','error');return;}if(code!==pendingCode){showMsg('验证码错误，请重试','error');return;}showMsg('🎉 登录成功，正在进入霓虹裂隙…','success');setTimeout(enterSite,1500);}}
 
-function showMsg(text, type){
-  const el = document.getElementById('loginMsg');
-  el.textContent = text; el.className = 'login-msg ' + type;
-}
+function showMsg(text,type){var el=document.getElementById('loginMsg');el.textContent=text;el.className='login-msg '+type;}
 
-function logout(){
-  const gate = document.getElementById('loginGate');
-  gate.classList.remove('hidden');
-  document.body.style.overflow = 'hidden';
-  const btn = document.getElementById('openLogin');
-  if(btn){ btn.textContent = '启动'; btn.style.background = ''; btn.classList.remove('nav-account-btn'); }
-  document.getElementById('qqEmail').value = '';
-  document.getElementById('qqPwd').value = '';
-  document.getElementById('phoneNum').value = '';
-  document.getElementById('phoneCode').value = '';
-  document.getElementById('loginMsg').textContent = '';
-  pendingCode = null;
-  switchTab('qq');
-}
+function logout(){var gate=document.getElementById('loginGate');gate.classList.remove('hidden');document.body.style.overflow='hidden';var btn=document.getElementById('openLogin');if(btn){btn.textContent='启动';btn.style.background='';btn.classList.remove('nav-account-btn');}document.getElementById('qqEmail').value='';document.getElementById('qqPwd').value='';document.getElementById('phoneNum').value='';document.getElementById('phoneCode').value='';document.getElementById('loginMsg').textContent='';pendingCode=null;switchTab('qq');}
 </script>
 </body>
 </html>
