@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的世界 - Voxel World</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { overflow: hidden; background: #87CEEB; font-family: 'Microsoft YaHei', sans-serif; }
+        #back-link {
+            position: fixed; top: 14px; right: 14px; z-index: 30;
+            color: rgba(255,255,255,0.9); text-decoration: none; font-size: 13px;
+            text-shadow: 1px 1px 2px black; padding: 6px 12px;
+            background: rgba(0,0,0,0.35); border-radius: 20px; transition: background .2s;
+        }
+        #back-link:hover { background: rgba(0,0,0,0.6); }
+        #crosshair {
+            position: fixed; top: 50%; left: 50%; width: 20px; height: 20px;
+            transform: translate(-50%, -50%); pointer-events: none; z-index: 10;
+        }
+        #crosshair::before, #crosshair::after {
+            content: ''; position: absolute; background: rgba(255,255,255,0.9);
+            box-shadow: 0 0 2px rgba(0,0,0,0.5);
+        }
+        #crosshair::before { top: 9px; left: 0; width: 20px; height: 2px; }
+        #crosshair::after { top: 0; left: 9px; width: 2px; height: 20px; }
+        #ui {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            display: flex; gap: 10px; z-index: 10; background: rgba(0,0,0,0.4);
+            padding: 10px; border-radius: 10px;
+        }
+        .slot {
+            width: 50px; height: 50px; border: 3px solid rgba(255,255,255,0.4);
+            border-radius: 6px; display: flex; align-items: center; justify-content: center;
+            font-size: 24px; font-weight: bold; color: white; cursor: pointer;
+            text-shadow: 1px 1px 2px black; transition: transform 0.1s;
+        }
+        .slot.active { border-color: #ffeb3b; transform: scale(1.15); box-shadow: 0 0 10px #ffeb3b; }
+        #overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.65);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 20; color: white; text-align: center;
+        }
+        #overlay h1 { font-size: 64px; margin-bottom: 20px; text-shadow: 3px 3px 0 #4a7c23; }
+        #overlay p { font-size: 20px; margin-bottom: 30px; line-height: 1.8; }
+        #overlay button {
+            padding: 15px 40px; font-size: 24px; background: #5d9e33; color: white;
+            border: none; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 0 #3d6b1f;
+        }
+        #overlay button:hover { background: #6bb33a; }
+        #info {
+            position: fixed; top: 10px; left: 10px; color: white; font-size: 14px;
+            text-shadow: 1px 1px 2px black; z-index: 10; line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <a href="../" id="back-link">← 返回霓虹裂隙</a>
+    <div id="crosshair"></div>
+    <div id="info">
+        FPS: <span id="fps">0</span> | 方块: <span id="count">0</span> | 位置: <span id="pos">0, 0, 0</span><br>
+        左键：破坏方块 | 右键：放置方块 | 数字 1-6 / 滚轮：切换方块
+    </div>
+    <div id="overlay">
+        <h1>我的世界</h1>
+        <p>
+            W A S D 移动 &nbsp;|&nbsp; 空格跳跃 &nbsp;|&nbsp; 鼠标控制视角<br>
+            左键破坏方块 &nbsp;|&nbsp; 右键放置方块<br>
+            数字键 1-6 或滚轮切换方块类型
+        </p>
+        <button id="startBtn">点击开始游戏</button>
+    </div>
+    <div id="ui"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+    <script>
+        // ===== 世界配置 =====
+        const WORLD_SIZE = 32;          // 世界半径（实际范围为 -SIZE ~ +SIZE）
+        const WORLD_HEIGHT = 16;        // 最大高度
+        const BLOCK_SIZE = 1;
+
+        // ===== 方块类型 =====
+        const BLOCK_TYPES = [
+            { id: 1, name: 'grass', color: '#5d9e33', side: '#6bb33a', bottom: '#5a4d39' },
+            { id: 2, name: 'dirt', color: '#5a4d39' },
+            { id: 3, name: 'stone', color: '#7a7a7a' },
+            { id: 4, name: 'wood', color: '#6b4519', top: '#8b6a3e' },
+            { id: 5, name: 'leaves', color: '#2d6a1f' },
+            { id: 6, name: 'sand', color: '#d6c274' }
+        ];
+
+        // ===== 材质缓存 =====
+        const materials = {};
+        function createNoiseTexture(baseColor) {
+            const size = 64;
+            const canvas = document.createElement('canvas');
+            canvas.width = size; canvas.height = size;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = baseColor;
+            ctx.fillRect(0, 0, size, size);
+            for (let i = 0; i < 600; i++) {
+                const x = Math.floor(Math.random() * size);
+                const y = Math.floor(Math.random() * size);
+                const w = Math.floor(Math.random() * 3) + 1;
+                const h = Math.floor(Math.random() * 3) + 1;
+                const shade = Math.random() > 0.5 ? 255 : 0;
+                ctx.fillStyle = `rgba(${shade},${shade},${shade},0.08)`;
+                ctx.fillRect(x, y, w, h);
+            }
+            const tex = new THREE.CanvasTexture(canvas);
+            tex.magFilter = THREE.NearestFilter;
+            tex.minFilter = THREE.NearestFilter;
+            return tex;
+        }
+        function getMaterial(type) {
+            if (materials[type.name]) return materials[type.name];
+            const makeMat = (color) => new THREE.MeshLambertMaterial({
+                map: createNoiseTexture(color),
+                color: new THREE.Color(color)
+            });
+            if (type.name === 'grass') {
+                const top = makeMat(type.color);
+                const side = makeMat(type.side || type.color);
+                const bot = makeMat(type.bottom || type.color);
+                materials[type.name] = [side, side, top, bot, side, side];
+            } else if (type.name === 'wood') {
+                const top = makeMat(type.top);
+                const side = makeMat(type.color);
+                materials[type.name] = [side, side, top, top, side, side];
+            } else {
+                materials[type.name] = makeMat(type.color);
+            }
+            return materials[type.name];
+        }
+
+        // ===== 场景初始化 =====
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x87CEEB);
+        scene.fog = new THREE.Fog(0x87CEEB, 20, 90);
+
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.05, 300);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        document.body.appendChild(renderer.domElement);
+
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        scene.add(ambientLight);
+        const sunLight = new THREE.DirectionalLight(0xffffff, 0.85);
+        sunLight.position.set(50, 100, 50);
+        sunLight.castShadow = true;
+        sunLight.shadow.mapSize.set(2048, 2048);
+        sunLight.shadow.camera.near = 0.5;
+        sunLight.shadow.camera.far = 200;
+        sunLight.shadow.camera.left = -60;
+        sunLight.shadow.camera.right = 60;
+        sunLight.shadow.camera.top = 60;
+        sunLight.shadow.camera.bottom = -60;
+        scene.add(sunLight);
+
+        const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
+
+        // ===== 世界数据 =====
+        const blocks = new Map();
+        function key(x, y, z) { return `${x},${y},${z}`; }
+        function getBlock(x, y, z) { return blocks.get(key(x, y, z)) || 0; }
+        function setBlock(x, y, z, typeId) {
+            if (typeId) blocks.set(key(x, y, z), typeId);
+            else blocks.delete(key(x, y, z));
+        }
+
+        // ===== 噪音地形 =====
+        function noise(x, z) {
+            const s = Math.sin(x * 12.9898 + z * 78.233) * 43758.5453;
+            return s - Math.floor(s);
+        }
+        function smoothNoise(x, z) {
+            const corners = (noise(x - 1, z - 1) + noise(x + 1, z - 1) + noise(x - 1, z + 1) + noise(x + 1, z + 1)) / 16;
+            const sides = (noise(x - 1, z) + noise(x + 1, z) + noise(x, z - 1) + noise(x, z + 1)) / 8;
+            const center = noise(x, z) / 4;
+            return corners + sides + center;
+        }
+        function interpolatedNoise(x, z) {
+            const i = Math.floor(x), f = x - i;
+            const j = Math.floor(z), g = z - j;
+            const v1 = smoothNoise(i, j), v2 = smoothNoise(i + 1, j);
+            const v3 = smoothNoise(i, j + 1), v4 = smoothNoise(i + 1, j + 1);
+            const i1 = v1 * (1 - f) + v2 * f;
+            const i2 = v3 * (1 - f) + v4 * f;
+            return i1 * (1 - g) + i2 * g;
+        }
+
+        function generateTerrain() {
+            for (let x = -WORLD_SIZE; x <= WORLD_SIZE; x++) {
+                for (let z = -WORLD_SIZE; z <= WORLD_SIZE; z++) {
+                    const h = Math.floor(interpolatedNoise(x * 0.07, z * 0.07) * 6) + 1;
+                    for (let y = -2; y <= h; y++) {
+                        let type;
+                        if (y === h) type = 1;
+                        else if (y >= h - 2) type = 2;
+                        else type = 3;
+                        setBlock(x, y, z, type);
+                    }
+                    if (h < 0) {
+                        for (let y = h + 1; y <= -1; y++) setBlock(x, y, z, 2);
+                    }
+                    if (Math.random() < 0.015 && h >= 0) generateTree(x, h + 1, z);
+                }
+            }
+        }
+        function generateTree(x, y, z) {
+            const height = 3 + Math.floor(Math.random() * 3);
+            for (let i = 0; i < height; i++) setBlock(x, y + i, z, 4);
+            for (let lx = -2; lx <= 2; lx++) {
+                for (let lz = -2; lz <= 2; lz++) {
+                    for (let ly = 0; ly < 2; ly++) {
+                        if (Math.abs(lx) + Math.abs(lz) + ly < 3 && !(lx === 0 && lz === 0 && ly === 0)) {
+                            setBlock(x + lx, y + height + ly, z + lz, 5);
+                        }
+                    }
+                }
+            }
+        }
+        generateTerrain();
+
+        // ===== 用 InstancedMesh 渲染方块（性能关键） =====
+        const instances = {}; // typeId -> { mesh, capacity, nextIndex, free: Set(), indexToKey: Map(), keyToIndex: Map() }
+        function initInstances() {
+            // 统计每种类型的数量
+            const counts = {};
+            for (const typeId of blocks.values()) counts[typeId] = (counts[typeId] || 0) + 1;
+            for (const type of BLOCK_TYPES) {
+                const count = Math.max(counts[type.id] || 1, 1);
+                const mesh = new THREE.InstancedMesh(boxGeometry, getMaterial(type), count);
+                mesh.castShadow = true;
+                mesh.receiveShadow = true;
+                mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+                mesh.count = 0;
+                instances[type.id] = {
+                    mesh,
+                    capacity: count,
+                    nextIndex: 0,
+                    free: new Set(),
+                    indexToKey: new Map(),
+                    keyToIndex: new Map()
+                };
+                scene.add(mesh);
+            }
+        }
+
+        const dummyMatrix = new THREE.Matrix4();
+        const hiddenMatrix = new THREE.Matrix4().makeScale(0, 0, 0);
+
+        function expandInstance(typeId) {
+            const inst = instances[typeId];
+            const newCapacity = inst.capacity * 2;
+            const type = BLOCK_TYPES.find(t => t.id === typeId);
+            const newMesh = new THREE.InstancedMesh(boxGeometry, getMaterial(type), newCapacity);
+            newMesh.castShadow = true;
+            newMesh.receiveShadow = true;
+            newMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+            newMesh.count = inst.mesh.count;
+
+            // 复制已有矩阵
+            for (let i = 0; i < inst.nextIndex; i++) {
+                inst.mesh.getMatrixAt(i, dummyMatrix);
+                newMesh.setMatrixAt(i, dummyMatrix);
+            }
+
+            scene.remove(inst.mesh);
+            inst.mesh.dispose();
+            inst.mesh = newMesh;
+            scene.add(newMesh);
+            inst.capacity = newCapacity;
+        }
+
+        function addBlockMesh(x, y, z, typeId) {
+            const inst = instances[typeId];
+            let index;
+            if (inst.free.size > 0) {
+                const it = inst.free.values();
+                index = it.next().value;
+                inst.free.delete(index);
+            } else {
+                index = inst.nextIndex++;
+                if (index >= inst.capacity) expandInstance(typeId);
+            }
+            dummyMatrix.makeTranslation(x, y, z);
+            inst.mesh.setMatrixAt(index, dummyMatrix);
+            inst.mesh.instanceMatrix.needsUpdate = true;
+            inst.mesh.count = Math.max(inst.mesh.count, index + 1);
+
+            const k = key(x, y, z);
+            inst.indexToKey.set(index, k);
+            inst.keyToIndex.set(k, index);
+        }
+
+        function removeBlockMesh(x, y, z, typeId) {
+            const inst = instances[typeId];
+            const k = key(x, y, z);
+            const index = inst.keyToIndex.get(k);
+            if (index === undefined) return;
+            inst.keyToIndex.delete(k);
+            inst.indexToKey.delete(index);
+            inst.free.add(index);
+            inst.mesh.setMatrixAt(index, hiddenMatrix);
+            inst.mesh.instanceMatrix.needsUpdate = true;
+            // 收缩末尾空白
+            while (inst.mesh.count > 0 && inst.free.has(inst.mesh.count - 1)) {
+                inst.free.delete(inst.mesh.count - 1);
+                inst.mesh.count--;
+                inst.nextIndex--;
+            }
+        }
+
+        function rebuildAllMeshes() {
+            // 清空所有 instance 数据
+            for (const typeId of BLOCK_TYPES.map(t => t.id)) {
+                const inst = instances[typeId];
+                inst.nextIndex = 0;
+                inst.free.clear();
+                inst.indexToKey.clear();
+                inst.keyToIndex.clear();
+                inst.mesh.count = 0;
+            }
+            for (const [k, typeId] of blocks) {
+                const [x, y, z] = k.split(',').map(Number);
+                addBlockMesh(x, y, z, typeId);
+            }
+        }
+
+        initInstances();
+        rebuildAllMeshes();
+
+        // ===== 玩家控制 =====
+        const player = {
+            position: new THREE.Vector3(0, 12, 0),
+            velocity: new THREE.Vector3(0, 0, 0),
+            onGround: false,
+            height: 1.75,
+            radius: 0.25,
+            speed: 6,
+            jumpSpeed: 8.5
+        };
+        camera.position.copy(player.position);
+
+        const keys = { w: false, a: false, s: false, d: false, space: false, shift: false };
+        let yaw = 0, pitch = 0;
+
+        document.addEventListener('keydown', (e) => {
+            const k = e.key.toLowerCase();
+            if (keys.hasOwnProperty(k)) keys[k] = true;
+            if (k === ' ') keys.space = true;
+            if (k >= '1' && k <= '6') selectSlot(parseInt(k) - 1);
+            if (e.key === 'Escape' && dragMode) exitGameMode();
+        });
+        document.addEventListener('keyup', (e) => {
+            const k = e.key.toLowerCase();
+            if (keys.hasOwnProperty(k)) keys[k] = false;
+            if (k === ' ') keys.space = false;
+        });
+        document.addEventListener('mousemove', (e) => {
+            if (!isLocked) return;
+            yaw -= e.movementX * 0.002;
+            pitch -= e.movementY * 0.002;
+            pitch = Math.max(-Math.PI / 2 + 0.01, Math.min(Math.PI / 2 - 0.01, pitch));
+        });
+
+        let isLocked = false;
+        let dragMode = false;
+        let isDragging = false;
+        let lastMouseX = 0, lastMouseY = 0;
+        let dragMoved = false;
+        const startBtn = document.getElementById('startBtn');
+        const overlay = document.getElementById('overlay');
+        const overlayTitle = overlay.querySelector('h1');
+        const overlayText = overlay.querySelector('p');
+
+        function tryStartPointerLock() {
+            if (document.pointerLockElement === renderer.domElement) return;
+            renderer.domElement.requestPointerLock().catch(() => {
+                enterDragMode();
+            });
+        }
+
+        function enterDragMode() {
+            dragMode = true;
+            isLocked = true;
+            overlay.style.display = 'none';
+        }
+
+        function exitGameMode() {
+            if (dragMode) {
+                dragMode = false;
+                isLocked = false;
+                overlay.style.display = 'flex';
+            } else if (document.pointerLockElement) {
+                document.exitPointerLock();
+            }
+        }
+
+        startBtn.addEventListener('click', tryStartPointerLock);
+        renderer.domElement.addEventListener('click', tryStartPointerLock);
+
+        document.addEventListener('pointerlockchange', () => {
+            const locked = document.pointerLockElement === renderer.domElement;
+            if (locked && !dragMode) {
+                isLocked = true;
+                overlay.style.display = 'none';
+            } else if (!locked && !dragMode) {
+                isLocked = false;
+                overlay.style.display = 'flex';
+            }
+        });
+
+        document.addEventListener('pointerlockerror', () => {
+            overlayTitle.textContent = '鼠标锁定被阻止';
+            overlayText.innerHTML = `
+                当前浏览器或环境禁止自动锁定鼠标。<br>
+                请按下方按钮尝试「拖拽模式」：按住鼠标左键拖动即可转视角，点击左键破坏/放置方块。<br>
+                也可以直接用 <b>Chrome / Edge / Firefox</b> 浏览器打开本文件再试。
+            `;
+            startBtn.textContent = '点击开始（拖拽模式）';
+            enterDragMode();
+        });
+
+        // 拖拽模式：按住左键拖动转视角，点击（几乎没动）才触发破坏/放置
+        renderer.domElement.addEventListener('mousedown', (e) => {
+            if (!dragMode || e.button !== 0) return;
+            isDragging = true;
+            dragMoved = false;
+            lastMouseX = e.clientX;
+            lastMouseY = e.clientY;
+        });
+
+        document.addEventListener('mouseup', (e) => {
+            if (!dragMode) {
+                isDragging = false;
+                return;
+            }
+            if (e.button === 0) {
+                isDragging = false;
+                if (!dragMoved) {
+                    handleBlockClick(e);
+                }
+            } else if (e.button === 2) {
+                // 拖拽模式下右键点击 = 放置
+                handleBlockClick(e);
+            }
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isLocked) return;
+            if (dragMode && isDragging) {
+                const dx = e.clientX - lastMouseX;
+                const dy = e.clientY - lastMouseY;
+                if (Math.abs(dx) + Math.abs(dy) > 2) dragMoved = true;
+                yaw -= dx * 0.003;
+                pitch -= dy * 0.003;
+                pitch = Math.max(-Math.PI / 2 + 0.01, Math.min(Math.PI / 2 - 0.01, pitch));
+                lastMouseX = e.clientX;
+                lastMouseY = e.clientY;
+            } else if (!dragMode) {
+                yaw -= e.movementX * 0.002;
+                pitch -= e.movementY * 0.002;
+                pitch = Math.max(-Math.PI / 2 + 0.01, Math.min(Math.PI / 2 - 0.01, pitch));
+            }
+        });
+
+        // ===== 方块选择 UI =====
+        let selectedSlot = 0;
+        const ui = document.getElementById('ui');
+        function renderUI() {
+            ui.innerHTML = '';
+            BLOCK_TYPES.forEach((type, i) => {
+                const slot = document.createElement('div');
+                slot.className = 'slot' + (i === selectedSlot ? ' active' : '');
+                slot.style.background = type.color;
+                slot.textContent = i + 1;
+                slot.title = type.name;
+                slot.addEventListener('click', () => selectSlot(i));
+                ui.appendChild(slot);
+            });
+        }
+        function selectSlot(i) {
+            selectedSlot = ((i % BLOCK_TYPES.length) + BLOCK_TYPES.length) % BLOCK_TYPES.length;
+            renderUI();
+        }
+        renderUI();
+        document.addEventListener('wheel', (e) => {
+            selectedSlot = (selectedSlot + Math.sign(e.deltaY) + BLOCK_TYPES.length) % BLOCK_TYPES.length;
+            renderUI();
+        }, { passive: true });
+
+        // ===== 碰撞检测 =====
+        function isSolid(x, y, z) {
+            return !!getBlock(Math.round(x), Math.round(y), Math.round(z));
+        }
+        function resolveCollision() {
+            const px = player.position.x, py = player.position.y, pz = player.position.z;
+            const r = player.radius, h = player.height;
+            const bodyY = [py - h + 0.1, py - h * 0.55, py - 0.05];
+            const candidates = new Set();
+            for (let dx = -1; dx <= 1; dx++) {
+                for (let dz = -1; dz <= 1; dz++) {
+                    for (const by of bodyY) {
+                        candidates.add(key(Math.round(px + dx * (r + 0.02)), Math.round(by), Math.round(pz + dz * (r + 0.02))));
+                    }
+                }
+            }
+            for (const k of candidates) {
+                const [bx, byi, bz] = k.split(',').map(Number);
+                if (!getBlock(bx, byi, bz)) continue;
+                const dx = px - bx, dz = pz - bz;
+                const adx = Math.abs(dx), adz = Math.abs(dz);
+                if (adx < adz) {
+                    player.position.x = bx + Math.sign(dx) * (0.5 + r);
+                } else if (adx > adz) {
+                    player.position.z = bz + Math.sign(dz) * (0.5 + r);
+                } else {
+                    // 角上情况，推开
+                    player.position.x = bx + Math.sign(dx) * (0.5 + r);
+                    player.position.z = bz + Math.sign(dz) * (0.5 + r);
+                }
+            }
+            const groundX = Math.round(px), groundZ = Math.round(pz);
+            const footY = Math.round(py - h);
+            if (getBlock(groundX, footY, groundZ)) {
+                player.position.y = footY + 0.5 + h;
+                player.velocity.y = 0;
+                player.onGround = true;
+            } else {
+                player.onGround = false;
+            }
+            const headY = Math.round(py);
+            if (getBlock(groundX, headY, groundZ) && player.velocity.y > 0) {
+                player.position.y = headY - 0.5;
+                player.velocity.y = 0;
+            }
+        }
+
+        // ===== 射线交互 =====
+        const raycaster = new THREE.Raycaster();
+        const forwardDir = new THREE.Vector3();
+
+        function getLookedAtBlock() {
+            forwardDir.set(0, 0, -1).applyQuaternion(camera.quaternion);
+            raycaster.set(camera.position, forwardDir);
+            raycaster.near = 0.2;
+            raycaster.far = 6;
+
+            const hits = [];
+            for (const typeId of BLOCK_TYPES.map(t => t.id)) {
+                const inst = instances[typeId];
+                const inters = raycaster.intersectObject(inst.mesh);
+                for (const inter of inters) hits.push({ ...inter, typeId });
+            }
+            if (hits.length === 0) return null;
+            hits.sort((a, b) => a.distance - b.distance);
+            const hit = hits[0];
+            const index = hit.instanceId;
+            const inst = instances[hit.typeId];
+            const k = inst.indexToKey.get(index);
+            if (!k) return null;
+            const [bx, by, bz] = k.split(',').map(Number);
+            const normal = hit.face.normal.clone().transformDirection(hit.object.matrixWorld).round();
+            return { block: { x: bx, y: by, z: bz }, normal, typeId: hit.typeId };
+        }
+
+        function handleBlockClick(e) {
+            const target = getLookedAtBlock();
+            if (!target) return;
+            if (e.button === 0) {
+                // 破坏
+                removeBlockMesh(target.block.x, target.block.y, target.block.z, target.typeId);
+                setBlock(target.block.x, target.block.y, target.block.z, 0);
+            } else if (e.button === 2) {
+                // 放置
+                const nx = target.block.x + target.normal.x;
+                const ny = target.block.y + target.normal.y;
+                const nz = target.block.z + target.normal.z;
+                if (getBlock(nx, ny, nz)) return;
+                const dx = Math.abs(player.position.x - nx);
+                const dz = Math.abs(player.position.z - nz);
+                const footDist = Math.abs((player.position.y - player.height) - ny);
+                const headDist = Math.abs(player.position.y - ny);
+                if (dx < 0.8 && dz < 0.8 && (footDist < 1.1 || headDist < 0.6)) return;
+                const typeId = BLOCK_TYPES[selectedSlot].id;
+                setBlock(nx, ny, nz, typeId);
+                addBlockMesh(nx, ny, nz, typeId);
+            }
+        }
+
+        document.addEventListener('mousedown', (e) => {
+            if (!isLocked || dragMode) return;
+            handleBlockClick(e);
+        });
+
+        // 防止右键菜单
+        document.addEventListener('contextmenu', e => e.preventDefault());
+
+        // ===== 物理循环 =====
+        const clock = new THREE.Clock();
+        const gravity = 25;
+        const moveForward = new THREE.Vector3();
+        const moveRight = new THREE.Vector3();
+
+        let lastFpsUpdate = 0;
+        let frameCount = 0;
+        function updatePhysics(dt) {
+            moveForward.set(Math.sin(yaw), 0, Math.cos(yaw));
+            moveRight.set(Math.sin(yaw + Math.PI / 2), 0, Math.cos(yaw + Math.PI / 2));
+
+            const wishVel = new THREE.Vector3();
+            if (keys.w) wishVel.add(moveForward);
+            if (keys.s) wishVel.sub(moveForward);
+            if (keys.d) wishVel.add(moveRight);
+            if (keys.a) wishVel.sub(moveRight);
+            if (wishVel.lengthSq() > 0) wishVel.normalize().multiplyScalar(keys.shift ? player.speed * 0.4 : player.speed);
+
+            player.velocity.x = wishVel.x;
+            player.velocity.z = wishVel.z;
+
+            if (keys.space && player.onGround) {
+                player.velocity.y = player.jumpSpeed;
+                player.onGround = false;
+            }
+            player.velocity.y -= gravity * dt;
+
+            player.position.x += player.velocity.x * dt;
+            player.position.z += player.velocity.z * dt;
+            player.position.y += player.velocity.y * dt;
+
+            if (player.position.y < -30) {
+                player.position.set(0, 15, 0);
+                player.velocity.set(0, 0, 0);
+            }
+
+            resolveCollision();
+
+            camera.position.copy(player.position);
+            camera.rotation.order = 'YXZ';
+            camera.rotation.y = yaw;
+            camera.rotation.x = pitch;
+
+            // 更新眼睛大致高度显示
+            const ey = player.position.y.toFixed(1);
+            document.getElementById('pos').textContent =
+                `${player.position.x.toFixed(1)}, ${ey}, ${player.position.z.toFixed(1)}`;
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const dt = Math.min(clock.getDelta(), 0.05);
+            if (isLocked) updatePhysics(dt);
+            renderer.render(scene, camera);
+
+            frameCount++;
+            const now = performance.now();
+            if (now - lastFpsUpdate > 1000) {
+                document.getElementById('fps').textContent = frameCount;
+                document.getElementById('count').textContent = blocks.size;
+                frameCount = 0;
+                lastFpsUpdate = now;
+            }
+        }
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        animate();
+    </script>
+</body>
+</html>
