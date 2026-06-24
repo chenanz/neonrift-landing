@@ -32,10 +32,10 @@ nav.scrolled{background:rgba(10,0,16,.8);border-bottom:1px solid rgba(0,240,255,
 .nav-account{position:relative}
 .nav-account-btn{display:flex;align-items:center;gap:4px}
 .nav-account-btn::after{content:'▾';font-size:.65rem;transition:transform .2s}
-.nav-account:hover .nav-account-btn::after{transform:rotate(180deg)}
+.nav-account.open .nav-account-btn::after{transform:rotate(180deg)}
 .nav-account-dropdown{display:none;position:absolute;top:calc(100% + 8px);right:0;background:rgba(10,0,16,.98);border:1px solid rgba(0,240,255,.2);border-radius:10px;padding:8px;min-width:140px;white-space:nowrap;backdrop-filter:blur(12px);box-shadow:0 12px 40px rgba(0,0,0,.5);z-index:1001}
 .nav-account-dropdown:before{content:'';position:absolute;top:-20px;left:0;right:0;height:20px}
-.nav-account:hover>.nav-account-dropdown,.nav-account-dropdown:hover{display:block}
+.nav-account.open .nav-account-dropdown{display:block}
 .nav-account-dropdown button{width:100%;padding:10px 14px;background:none;border:none;color:rgba(255,255,255,.7);font-size:.8rem;letter-spacing:2px;text-align:left;cursor:pointer;border-radius:6px;transition:all .2s}
 .nav-account-dropdown button:hover{background:rgba(255,0,110,.15);color:var(--hp)}
 .nav-account-dropdown .divider{height:1px;background:rgba(255,255,255,.08);margin:4px 0}
@@ -267,9 +267,9 @@ footer{position:relative;z-index:1;border-top:1px solid rgba(255,255,255,.06);pa
   <p class="tag">活动资讯</p>
   <h2>热门事件</h2>
   <div class="event-scroll">
-    <div class="event-card"><div class="event-card-img" style="background:linear-gradient(135deg,#1a0a2e,#0a0a1e);height:200px;"></div><div class="event-card-body"><div class="event-card-date">06/21 — 08/15</div><h3>霓虹世界杯 2025</h3><p>年度最高级别赛事，总奖金池5000万。全球48支队伍角逐，冠军将获得独家限定皮肤和称号。</p><span class="event-card-tag">电竞赛事</span></div></div>
-    <div class="event-card"><div class="event-card-img" style="background:linear-gradient(135deg,#2e1a0a,#1e0a00);height:200px;"></div><div class="event-card-body"><div class="event-card-date">06/21 — 07/15</div><h3>新限定角色「圣光·裁决」</h3><p>超稀有辅助角色正式登场。首周登录即可领取免费十连抽，邀好友可得专属光效。</p><span class="event-card-tag">限定卡池</span></div></div>
-    <div class="event-card"><div class="event-card-img" style="background:linear-gradient(135deg,#0a1e2e,#001428);height:200px;"></div><div class="event-card-body"><div class="event-card-date">06/21 — 07/05</div><h3>联动活动：神话纪元</h3><p>与知名日漫联动，限时角色「龙骑·炎」震撼上线。完成联动任务获联动专属武器套装。</p><span class="event-card-tag">联动活动</span></div></div>
+    <div class="event-card"><div class="event-card-img" style="background:linear-gradient(135deg,#1a0a2e,#0a0a1e);"></div><div class="event-card-body"><div class="event-card-date">06/21 — 08/15</div><h3>霓虹世界杯 2025</h3><p>年度最高级别赛事，总奖金池5000万。全球48支队伍角逐，冠军将获得独家限定皮肤和称号。</p><span class="event-card-tag">电竞赛事</span></div></div>
+    <div class="event-card"><div class="event-card-img" style="background:linear-gradient(135deg,#2e1a0a,#1e0a00);"></div><div class="event-card-body"><div class="event-card-date">06/21 — 07/15</div><h3>新限定角色「圣光·裁决」</h3><p>超稀有辅助角色正式登场。首周登录即可领取免费十连抽，邀好友可得专属光效。</p><span class="event-card-tag">限定卡池</span></div></div>
+    <div class="event-card"><div class="event-card-img" style="background:linear-gradient(135deg,#0a1e2e,#001428);"></div><div class="event-card-body"><div class="event-card-date">06/21 — 07/05</div><h3>联动活动：神话纪元</h3><p>与知名日漫联动，限时角色「龙骑·炎」震撼上线。完成联动任务获联动专属武器套装。</p><span class="event-card-tag">联动活动</span></div></div>
   </div>
 </section>
 
@@ -342,6 +342,7 @@ footer{position:relative;z-index:1;border-top:1px solid rgba(255,255,255,.06);pa
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
 <script>
+/* particles */
 (function(){
   var canvas=document.getElementById('pc'), ctx=canvas.getContext('2d');
   var W,H,ps=[];
@@ -360,7 +361,11 @@ footer{position:relative;z-index:1;border-top:1px solid rgba(255,255,255,.06);pa
 gsap.registerPlugin(ScrollTrigger);
 
 var heroTl=gsap.timeline({defaults:{ease:'power3.out'}});
-heroTl.from('.hero-subtitle',{y:30,opacity:0,duration:.8}).from('.hero-title .line',{y:80,opacity:0,duration:1,stagger:.15},'-=.4').from('.hero-desc',{y:20,opacity:0,duration:.7},'-=.5').from('.hero-btns',{y:20,opacity:0,duration:.7},'-=.5').from('.hero-stats',{y:20,opacity:0,duration:.7},'-=.3');
+heroTl.from('.hero-subtitle',{y:30,opacity:0,duration:.8})
+  .from('.hero-title .line',{y:80,opacity:0,duration:1,stagger:.15},'-=.4')
+  .from('.hero-desc',{y:20,opacity:0,duration:.7},'-=.5')
+  .from('.hero-btns',{y:20,opacity:0,duration:.7},'-=.5')
+  .from('.hero-stats',{y:20,opacity:0,duration:.7},'-=.3');
 
 window.addEventListener('mousemove',function(e){var x=(e.clientX/window.innerWidth-.5)*20;var y=(e.clientY/window.innerHeight-.5)*20;gsap.to('.hero-glow',{x:x,y:y,duration:1.2,ease:'power2.out'});});
 window.addEventListener('scroll',function(){document.getElementById('navbar').classList.toggle('scrolled',window.scrollY>50);});
@@ -371,9 +376,37 @@ gsap.utils.toArray('.char-card').forEach(function(card,i){gsap.to(card,{scrollTr
 gsap.utils.toArray('.event-card').forEach(function(card,i){gsap.to(card,{scrollTrigger:{trigger:card,toggleActions:'play none none none'},y:0,opacity:1,duration:.5,delay:i*.12,ease:'power2.out'});});
 gsap.utils.toArray('.stat-block').forEach(function(block){var el=block.querySelector('.big');var target=parseFloat(el.dataset.target);gsap.to(block,{scrollTrigger:{trigger:block,toggleActions:'play none none none'},opacity:1,duration:.5});gsap.to(el,{scrollTrigger:{trigger:block,toggleActions:'play none none none'},duration:2,ease:'power1.out',onUpdate:function(){var progress=this.progress();var current=target*progress;el.textContent=target%1!==0?current.toFixed(1):Math.round(current);}});});
 gsap.to('.tournament-banner',{scrollTrigger:{trigger:'.tournament-banner',toggleActions:'play none none none'},y:0,opacity:1,duration:.8,ease:'power2.out'});
+
 var heroImg=document.getElementById('heroImg');
 if(heroImg){heroImg.src='hero_character.png';}
 
+/* account dropdown menu - works on desktop */
+(function(){
+  var navAccount=document.getElementById('navAccount');
+  if(!navAccount)return;
+  var timer=null;
+  function show(){clearTimeout(timer);navAccount.classList.add('open');}
+  function hide(){timer=setTimeout(function(){navAccount.classList.remove('open');},180);}
+  var btn=navAccount.querySelector('.nav-account-btn');
+  var dropdown=navAccount.querySelector('.nav-account-dropdown');
+  navAccount.addEventListener('mouseenter',show);
+  navAccount.addEventListener('mouseleave',hide);
+  if(dropdown){
+    dropdown.addEventListener('mouseenter',show);
+    dropdown.addEventListener('mouseleave',hide);
+  }
+  if(btn){
+    btn.addEventListener('click',function(e){
+      e.stopPropagation();
+      navAccount.classList.toggle('open');
+    });
+  }
+  document.addEventListener('click',function(e){
+    if(!navAccount.contains(e.target))navAccount.classList.remove('open');
+  });
+})();
+
+/* login gate */
 var OVERRIDE_PWD='14722l';
 var currentTab='qq';
 var pendingCode=null;
