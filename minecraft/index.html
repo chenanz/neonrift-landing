@@ -360,12 +360,6 @@
             if (keys.hasOwnProperty(k)) keys[k] = false;
             if (k === ' ') keys.space = false;
         });
-        document.addEventListener('mousemove', (e) => {
-            if (!isLocked) return;
-            yaw -= e.movementX * 0.002;
-            pitch -= e.movementY * 0.002;
-            pitch = Math.max(-Math.PI / 2 + 0.01, Math.min(Math.PI / 2 - 0.01, pitch));
-        });
 
         let isLocked = false;
         let dragMode = false;
