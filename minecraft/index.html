@@ -609,7 +609,7 @@
         let lastFpsUpdate = 0;
         let frameCount = 0;
         function updatePhysics(dt) {
-            moveForward.set(Math.sin(yaw), 0, Math.cos(yaw));
+            moveForward.set(-Math.sin(yaw), 0, -Math.cos(yaw));
             moveRight.set(Math.sin(yaw + Math.PI / 2), 0, Math.cos(yaw + Math.PI / 2));
 
             const wishVel = new THREE.Vector3();
